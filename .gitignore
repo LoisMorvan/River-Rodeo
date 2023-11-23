@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyc
+
+# Flask
+instance/
+webapp.egg-info/
+.env
+
+# Vue.js
+node_modules/
+/dist/
+.DS_Store
+
+# Virtual Environment
+venv/
+env/
+
+# IDE
+.idea/
+
+# Compiled Python files
+*.pyc
+
+# Compiled C extensions
+*.so
+
+# Dependency directories
+.python-eggs/
+bin/
+lib/
+lib64/
+include/
+share/
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+
+# Python Installer
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
