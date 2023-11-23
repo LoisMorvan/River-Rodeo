@@ -6,7 +6,7 @@
     ```
     source env/Scripts/activate
     pip install -r requirements.txt
-    
+    flask run --port=5001 --debug
     ```
 
 ## Dev
