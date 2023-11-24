@@ -1,11 +1,13 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-
-</script>
-
 <template>
+  <RouterView />
 </template>
 
-<style scoped>
+<script setup>
+import { RouterView } from "vue-router";
+</script>
 
+<style>
+#app {
+  margin-top: 60px
+}
 </style>
