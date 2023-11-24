@@ -29,10 +29,21 @@
    npm install
    npm run dev
    ```
-
-## Installation de Mysql (Windows)
+## MySQL
+### Installation de Mysql (Windows)
 
 Allez sur ce lien https://dev.mysql.com/downloads/installer/ et télécharger la dernière version de Mysql
+
+### Lancement de MySQL (Windows)
+
+Si MySQL ne se lance pas au démarrage de l'ordinateur suivez cette DOC. 
+1. Lancer le CMD en tant qu'administrateur et lancer mysql
+   ```
+   net start nom_du_servie
+   ```
+2. Remplacer le nom du service par le nom du service que vous avez défini lors de l'installation
+
+Par défaut pour MySQL 8.0, le nom du service est : MySQL80
 
 ## Ajout des variables d'environnements
 
@@ -40,10 +51,7 @@ Allez sur ce lien https://dev.mysql.com/downloads/installer/ et télécharger la
 2. Créer les fichier d'environnement
    ```
    cd server
-   mkdir instance
    touch .env
-   cd instance
-   touch config.py
    ```
 3. Dans le fichier .env ajouter les varaibles d'environnement nécéssaire
 
@@ -54,22 +62,8 @@ Allez sur ce lien https://dev.mysql.com/downloads/installer/ et télécharger la
    ```
 
    Remplacer la varaible "environnement" par votre environnement -> "development" ou "production"
+
    Remplacer les variables "your_prod_database_uri" par les URL des base de données -> mysql://root:password@localhost:3306/mydatabase
-
-4. Dans le fichier config.py ajouter le texte suivant
-
-   ```
-   import os
-
-   class Config:
-       SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-   class DevelopmentConfig(Config):
-       SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URI')
-
-   class ProductionConfig(Config):
-       SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DATABASE_URI')
-   ```
 
 ## Dev
 
