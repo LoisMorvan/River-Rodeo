@@ -1,4 +1,8 @@
 # River-Rodeo
+## Prérequis:
+- installer python
+- installer nodeJS
+- installer mysql
 ## Lancer le back (Windows)
 1. Clôner le projet
 2. se placer à la racine du projet
@@ -8,9 +12,12 @@
     ```
 4. Lancer l'env virtuel
     ````
-    source env/Scripts/activate
+    .\env\Scripts\activate
     ````
 3. Aller dans le répertoire server
+   ```
+   cd .\server\
+   ```
 4. Lancer le back(Windows)
 
     ```
@@ -19,18 +26,27 @@
     ```
 ## Lancer le front (Windows)
 1. Aller dans le répertoire client
+   ```
+   cd client
+   ```
 2. Lancer le front (Windows)
     ```
-    cd client
     npm install
     npm run dev
     ```
 
 ## Installation de Mysql (Windows)
-Allez sur ce lien https://dev.mysql.com/downloads/installer/ et télécharger la dernière version de Mysql
+- télécharcher serveur mysql et conserver mdp root
+
+- installer un client mysql et se connecter au serveur via mdp root
+- créer une BDD(schéma) riverroder
+- créer un utilisateur sur le localhost username(Ex: adminRiverRoder) avec tous les droits sur le shéma & conserver le mdp
+- paramétrer le config.py avec SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://username:password@localhost/dbname'
 
 ## Dev
 ### Installation d'une nouvelle bibliothèque Python (Ex de Flask)
+
+- Une foi dans le répertoire serveur
 ```
 pip install Flask
 pip freeze -l > requirements.txt
