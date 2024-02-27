@@ -60,7 +60,8 @@ Eslint  &  Prettier
 
     ```
     pip install -r requirements.txt
-    flask run --port=5001 --debug
+    python manage.py migrate
+    python manage.py runserver
     ```
 ## Lancer le front (Windows)
 1. Aller dans le répertoire client
