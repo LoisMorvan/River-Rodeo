@@ -60,6 +60,7 @@ Eslint  &  Prettier
 
     ```
     pip install -r requirements.txt
+    python makemigrations
     python manage.py migrate
     python manage.py runserver
     ```
