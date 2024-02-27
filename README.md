@@ -31,6 +31,7 @@ Eslint  &  Prettier
     - installer nodeJS lts : 20.11.1
 
             nvm install lts
+            nvm use lts
 
 - Mysql
 ## Procédure d'initialisation du projet pour dev local (Windows)
@@ -44,7 +45,7 @@ Eslint  &  Prettier
 
 3. Créer l'env virtuel python  12 (que la première fois)
 
-        python12 -m venv env
+        python3.12 -m venv env
 
 
 4. Lancer l'env virtuel
