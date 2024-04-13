@@ -1,26 +1,47 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue';
+import { RouterLink, RouterView } from 'vue-router';
+import HelloWorld from './components/HelloWorld.vue';
+import Authenticate from './views/Authentication/AuthenticateView.vue';
+
+const showLogoutMessage = ref(false);
+
+const onLoggedOut = () => {
+  showLogoutMessage.value = true;
+  setTimeout(() => {
+    showLogoutMessage.value = false;
+  }, 3000);
+};
 </script>
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
-
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <Authenticate @loggedOut="onLoggedOut" />
       </nav>
     </div>
   </header>
+  <div v-if="showLogoutMessage" class="success-message">
+    You have logged out successfully!
+  </div>
 
   <RouterView />
 </template>
 
 <style scoped>
+.success-message {
+  background-color: green;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;
