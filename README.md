@@ -8,21 +8,21 @@ Projet Vue écchafauder avec vite:
 √ Add Pinia for state management? ... Yes
 √ Add Vitest for Unit Testing? ... Yes
 
-pas de solution de  testing bout en bout :
+Pas de solution de testing bout en bout :
 
--  Cypress
+- Cypress
 - Nightwatch
 - Playwright
 
-Eslint  &  Prettier
+Eslint & Prettier
 
 
 ## Prérequis à installer en local:
-- python 12
+- Python 12
 
     - Windows: Microsoft store
 
-    - installer venv pour utiliser env virtuel  python
+    - Installer venv pour utiliser env virtuel  python
 
 - Gestionnaire de version NodeJS nvm
 
@@ -39,7 +39,7 @@ Eslint  &  Prettier
 
         git clone [url du repo distant]
 
-2. se placer à la racine du projet
+2. Se placer à la racine du projet
 
         cd River-Rodeo/
 
@@ -52,37 +52,42 @@ Eslint  &  Prettier
     ````
     .\env\Scripts\activate
     ````
-3. Aller dans le répertoire server
-   ```
-   cd .\server\
-   ```
-4. Lancer le back(Windows)
-
-    ```
+## Lancer le back (Windows)
     pip install -r requirements.txt
-    python makemigrations
+    python manage.py makemigrations
     python manage.py migrate
     python manage.py runserver
-    ```
+
 ## Lancer le front (Windows)
-1. Aller dans le répertoire client
-   ```
-   cd client
-   ```
-2. Lancer le front (Windows)
-    ```
     npm install
     npm run dev
-    ```
 
-## Installation de Mysql (Windows)
-- télécharcher serveur mysql et conserver mdp root
+## MySQL
+### Installation de Mysql (Windows)
 
-- installer un client mysql et se connecter au serveur via mdp root
-- créer une BDD(schéma) riverroder
-- créer un utilisateur sur le localhost username(Ex: adminRiverRoder) avec tous les droits sur le shéma & conserver le mdp
-- paramétrer le config.py avec SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://username:password@localhost/dbname'
+Allez sur ce lien https://dev.mysql.com/downloads/installer/ et télécharger la dernière version de Mysql
 
+### Lancement de MySQL (Windows)
+
+Si MySQL ne se lance pas au démarrage de l'ordinateur suivez cette DOC. 
+1. Lancer le CMD en tant qu'administrateur et lancer mysql
+   ```
+   net start nom_du_servie
+   ```
+2. Remplacer le nom du service par le nom du service que vous avez défini lors de l'installation
+
+Par défaut pour MySQL 8.0, le nom du service est : MySQL80
+
+### Création base de données
+1. Créer une BDD riverroder
+```
+CREATE DATABSAE riverrodeo
+```
+2. Créer un utilisateur sur le localhost username(Ex: adminRiverRoder) avec tous les droits sur le shéma & conserver le mdp
+```
+CREATE USER 'adminRiverRoder'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON riverrodeo . * TO 'adminRiverRoder'@'localhost';
+```
 ## Dev
 ### Installation d'une nouvelle bibliothèque Python (Ex de Flask)
 
@@ -92,17 +97,13 @@ pip install Flask
 pip freeze -l > requirements.txt
 ```
 
-
-
-
-
 # river-rodeo
 
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur)
 
 ## Type Support for `.vue` Imports in TS
 
