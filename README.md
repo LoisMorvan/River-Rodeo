@@ -88,6 +88,29 @@ CREATE DATABSAE riverrodeo
 CREATE USER 'adminRiverRoder'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON riverrodeo . * TO 'adminRiverRoder'@'localhost';
 ```
+
+## Ajout des variables d'environnements
+
+1. Créer les fichier d'environnement
+   ```
+   touch .env
+   ```
+3. Dans le fichier .env ajouter les varaibles d'environnement nécéssaire
+
+   ```
+    DJANGO_ENV=environnement
+    DATABASE_NAME=database_name
+    DATABASE_USER=database_user
+    DATABASE_PASSWORD=database_password
+    SECRET_KEY="secret_key"
+   ```
+
+   Remplacer la variable "environnement" par votre environnement -> "development" ou "production".
+
+   Remplacer les variables "database_name", "database_user", "database_password" par les informations de votre base de données.
+
+   Remplacer la variable "secret_key" par la secret key de votre projet.
+
 ## Dev
 ### Installation d'une nouvelle bibliothèque Python (Ex de Flask)
 
