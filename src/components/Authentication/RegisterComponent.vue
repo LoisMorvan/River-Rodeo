@@ -1,42 +1,40 @@
 <template>
-  <div>
-    <div v-if="showErrorMessage" class="error-message">
-      {{ errorMessage }}
+  <div class="register">
+    <div class="content">
+      <div v-if="showErrorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      <h2>Register</h2>
+      <form class="form-register" @submit.prevent="register">
+        <div class="inputBox">
+          <input v-model="username" type="text" required /> <i>Username</i>
+        </div>
+        <div class="inputBox">
+          <input v-model="email" type="email" required /> <i>Email</i>
+        </div>
+
+        <div class="inputBox">
+          <input v-model="first_name" type="text" required /> <i>First Name</i>
+        </div>
+        <div class="inputBox">
+          <input v-model="last_name" type="text" required /> <i>Last Name</i>
+        </div>
+        <div class="inputBox date">
+          <input v-model="date_de_naissance" type="date" required /> <i>Date of birth</i>
+        </div>
+
+        <div class="inputBox">
+          <input v-model="password" type="password" required /> <i>Password</i>
+        </div>
+        <div class="links">
+          <p>You have an account ?</p>
+          <a @click="goToLogin" href="#">Login</a>
+        </div>
+        <div class="inputBox">
+          <input type="submit" value="Register">
+        </div>
+      </form>
     </div>
-    <h2>Register</h2>
-    <form @submit.prevent="register">
-      <label>
-        Username:
-        <input v-model="username" type="text" required />
-      </label>
-      <br />
-      <label>
-        Email:
-        <input v-model="email" type="email" required />
-      </label>
-      <br />
-      <label>
-        First Name:
-        <input v-model="first_name" type="text" required />
-      </label>
-      <br />
-      <label>
-        Last Name:
-        <input v-model="last_name" type="text" required />
-      </label>
-      <br />
-      <label>
-        Date de Naissance:
-        <input v-model="date_de_naissance" type="date" required />
-      </label>
-      <br />
-      <label>
-        Password:
-        <input v-model="password" type="password" required />
-      </label>
-      <br />
-      <button type="submit">Register</button>
-    </form>
   </div>
 </template>
 
@@ -100,6 +98,9 @@ export default {
         return false;
       }
     },
+    goToLogin() {
+      this.$router.push('/login');
+    },
   },
 };
 </script>
@@ -111,5 +112,129 @@ export default {
   padding: 10px;
   text-align: center;
   margin-bottom: 10px;
+}
+
+.register {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background: #222;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  border-radius: 4px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 9);
+}
+
+.register .content {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.register .content h2 {
+  font-size: 2em;
+  color: #02BD9C;
+  text-transform: uppercase;
+}
+
+.register .content .form-register {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.register .content .form-register .inputBox {
+  position: relative;
+  width: 100%;
+}
+
+.register .content .form-register .inputBox input {
+  position: relative;
+  width: 100%;
+  background: #333;
+  border: none;
+  outline: none;
+  padding: 25px 10px 7.5px;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 1em;
+}
+
+.register .content .form-register .inputBox i {
+  position: absolute;
+  left: 0;
+  padding: 15px 10px;
+  font-style: normal;
+  color: #aaa;
+  transition: 0.5s;
+  pointer-events: none;
+}
+
+.register .content .form-register .inputBox.date i {
+  transform: translateY(-7.5px);
+  font-size: 0.8em;
+}
+
+.register .content .form-register .inputBox input:focus~i,
+.register .content .form-register .inputBox input:valid~i {
+  transform: translateY(-7.5px);
+  font-size: 0.8em;
+  color: #fff;
+}
+
+.register .content .form-register .links {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.register .content .form-register .links p {
+  color: #fff;
+}
+
+.register .content .form-register .links a {
+  color: #02BD9C;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register .content .form-register .inputBox input[type="submit"] {
+  padding: 10px;
+  background: #02BD9C;
+  color: #000;
+  font-weight: 600;
+  font-size: 1.35em;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+input[type="submit"]:active {
+  opacity: 0.6;
+}
+
+@media (max-width: 900px) {
+  span {
+    width: calc(10vw - 2px);
+    height: calc(10vw - 2px);
+  }
+}
+
+@media (max-width: 600px) {
+  span {
+    width: calc(20vw - 2px);
+    height: calc(20vw - 2px);
+  }
 }
 </style>
