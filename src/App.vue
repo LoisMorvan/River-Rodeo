@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { RouterLink, RouterView } from 'vue-router';
+import { ref, computed } from 'vue';
+import { RouterLink, RouterView, useRoute } from 'vue-router';
 import Navbar from './views/Authentication/NavbarView.vue';
 
 const showLogoutMessage = ref(false);
+const route = useRoute();
 
 const onLoggedOut = () => {
   showLogoutMessage.value = true;
@@ -11,11 +12,18 @@ const onLoggedOut = () => {
     showLogoutMessage.value = false;
   }, 3000);
 };
+
+const showNavbar = computed(() => {
+  // Vérifiez la métadonnée pour déterminer si la navbar doit être affichée
+  return route.meta.showNavbar !== false;
+});
+
+
 </script>
 
 <template>
   <header>
-    <Navbar @loggedOut="onLoggedOut" />
+    <Navbar v-if="showNavbar" @loggedOut="onLoggedOut" />
   </header>
   <div v-if="showLogoutMessage" class="success-message">
     You have logged out successfully!
