@@ -1,10 +1,8 @@
 <template>
   <nav class="navbar">
     <div @click="goToHome" href="/" class="navbar-logo">
-      <img src="@/assets/logo-navbar.svg" alt="Logo">
-      <div class="navbar-brand">
-        River Rodeo
-      </div>
+      <img src="@/assets/logo-navbar.svg" alt="Logo" />
+      <div class="navbar-brand">River Rodeo</div>
     </div>
     <div class="navbar-links">
       <button v-if="!isLoggedIn" @click="goToLogin" class="button-login">Login</button>
@@ -21,11 +19,11 @@ export default {
   emits: ['loggedOut'],
   data() {
     return {
-      isLoggedIn: !!localStorage.getItem('auth_token'),
+      isLoggedIn: !!localStorage.getItem('auth_token')
     };
   },
   watch: {
-    '$route': function () {
+    $route: function () {
       this.isLoggedIn = !!localStorage.getItem('auth_token');
     }
   },
@@ -49,13 +47,14 @@ export default {
     },
     goToRegister() {
       this.$router.push('/register');
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style scoped>
 .navbar {
+  background-color: black; /* Définit la couleur de fond en noir */
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
@@ -100,25 +99,28 @@ export default {
   padding-right: 20px;
   text-align: center;
   touch-action: manipulation;
-  transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  transition:
+    background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+    color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
   user-select: none;
   -webkit-user-select: none;
   vertical-align: middle;
 }
 
 .navbar-links button.button-register {
-  background-color: #02BD9C;
+  background-color: #02bd9c;
 }
 
 .navbar-links button.button-register:hover,
 .navbar-links button.button-register:focus {
-  background-color: #089B80;
+  background-color: #089b80;
   color: #ffffff;
 }
 
 .navbar-links button.button-register:active {
-  background: #05D6AE;
-  color: rgb(255, 255, 255, .7);
+  background: #05d6ae;
+  color: rgb(255, 255, 255, 0.7);
 }
 
 .navbar-links button.button-login,
@@ -138,6 +140,6 @@ export default {
 .navbar-links button.button-login:active,
 .navbar-links button.button-logout:active {
   background: #333333;
-  color: rgb(255, 255, 255, .7);
+  color: rgb(255, 255, 255, 0.7);
 }
 </style>

@@ -9,9 +9,7 @@
         <div class="inputBox">
           <input v-model="username" type="text" required /> <i>Username</i>
         </div>
-        <div class="inputBox">
-          <input v-model="email" type="email" required /> <i>Email</i>
-        </div>
+        <div class="inputBox"><input v-model="email" type="email" required /> <i>Email</i></div>
 
         <div class="inputBox">
           <input v-model="first_name" type="text" required /> <i>First Name</i>
@@ -31,7 +29,7 @@
           <a @click="goToLogin" href="#">Login</a>
         </div>
         <div class="inputBox">
-          <input type="submit" value="Register">
+          <input type="submit" value="Register" />
         </div>
       </form>
     </div>
@@ -51,7 +49,7 @@ export default {
       date_de_naissance: '',
       password: '',
       showErrorMessage: false,
-      errorMessage: '',
+      errorMessage: ''
     };
   },
   methods: {
@@ -100,8 +98,8 @@ export default {
     },
     goToLogin() {
       this.$router.push('/login');
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -116,10 +114,11 @@ export default {
 
 .register {
   position: absolute;
-  top: 50%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
+  height: 640px; /* Réduire la hauteur */
   background: #222;
   z-index: 1000;
   display: flex;
@@ -137,12 +136,12 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 40px;
+  gap: 20px;
 }
 
 .register .content h2 {
   font-size: 2em;
-  color: #02BD9C;
+  color: #02bd9c;
   text-transform: uppercase;
 }
 
@@ -186,8 +185,8 @@ export default {
   font-size: 0.8em;
 }
 
-.register .content .form-register .inputBox input:focus~i,
-.register .content .form-register .inputBox input:valid~i {
+.register .content .form-register .inputBox input:focus ~ i,
+.register .content .form-register .inputBox input:valid ~ i {
   transform: translateY(-7.5px);
   font-size: 0.8em;
   color: #fff;
@@ -205,14 +204,14 @@ export default {
 }
 
 .register .content .form-register .links a {
-  color: #02BD9C;
+  color: #02bd9c;
   font-weight: 600;
   text-decoration: none;
 }
 
-.register .content .form-register .inputBox input[type="submit"] {
+.register .content .form-register .inputBox input[type='submit'] {
   padding: 10px;
-  background: #02BD9C;
+  background: #02bd9c;
   color: #000;
   font-weight: 600;
   font-size: 1.35em;
@@ -220,7 +219,7 @@ export default {
   cursor: pointer;
 }
 
-input[type="submit"]:active {
+input[type='submit']:active {
   opacity: 0.6;
 }
 
