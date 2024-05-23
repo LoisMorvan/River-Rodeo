@@ -1,10 +1,20 @@
+<template>
+  <div id="app" class="app-container">
+    <header>
+      <Navbar v-if="showNavbar" @loggedOut="onLoggedOut" />
+    </header>
+    <div v-if="showLogoutMessage" class="success-message">You have logged out successfully!</div>
+    <RouterView />
+  </div>
+</template>
+
 <script setup lang="ts">
-import { ref } from 'vue';
-import { RouterLink, RouterView } from 'vue-router';
-import HelloWorld from './components/HelloWorld.vue';
-import Authenticate from './views/Authentication/AuthenticateView.vue';
+import { ref, computed } from 'vue';
+import { RouterLink, RouterView, useRoute } from 'vue-router';
+import Navbar from './views/Authentication/NavbarView.vue';
 
 const showLogoutMessage = ref(false);
+const route = useRoute();
 
 const onLoggedOut = () => {
   showLogoutMessage.value = true;
@@ -12,95 +22,27 @@ const onLoggedOut = () => {
     showLogoutMessage.value = false;
   }, 3000);
 };
+
+const showNavbar = computed(() => {
+  // Vérifiez la métadonnée pour déterminer si la navbar doit être affichée
+  return route.meta.showNavbar !== false;
+});
 </script>
 
-<template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <Authenticate @loggedOut="onLoggedOut" />
-      </nav>
-    </div>
-  </header>
-  <div v-if="showLogoutMessage" class="success-message">
-    You have logged out successfully!
-  </div>
-
-  <RouterView />
-</template>
-
 <style scoped>
+.app-container {
+  background-image: url('assets/background_login.png'); /* Chemin vers votre image */
+  background-size: cover; /* Ajuste l'image pour couvrir toute la zone */
+  background-position: center; /* Centre l'image */
+  background-repeat: no-repeat; /* Empêche la répétition de l'image */
+  min-height: 100vh; /* Assure que le conteneur couvre toute la hauteur de la fenêtre */
+}
+
 .success-message {
   background-color: green;
   color: white;
   padding: 10px;
   text-align: center;
   margin-bottom: 10px;
-}
-
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
 }
 </style>

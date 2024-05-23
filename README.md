@@ -81,7 +81,7 @@ Par défaut pour MySQL 8.0, le nom du service est : MySQL80
 ### Création base de données
 1. Créer une BDD riverroder
 ```
-CREATE DATABSAE riverrodeo
+CREATE DATABASE riverrodeo;
 ```
 2. Créer un utilisateur sur le localhost username(Ex: adminRiverRoder) avec tous les droits sur le shéma & conserver le mdp
 ```
@@ -102,6 +102,7 @@ GRANT ALL PRIVILEGES ON riverrodeo . * TO 'adminRiverRoder'@'localhost';
     DATABASE_NAME=database_name
     DATABASE_USER=database_user
     DATABASE_PASSWORD=database_password
+    DATABASE_PORT=database_port
     SECRET_KEY="secret_key"
    ```
 
@@ -110,6 +111,8 @@ GRANT ALL PRIVILEGES ON riverrodeo . * TO 'adminRiverRoder'@'localhost';
    Remplacer les variables "database_name", "database_user", "database_password" par les informations de votre base de données.
 
    Remplacer la variable "secret_key" par la secret key de votre projet.
+
+   Remplacer la variable "database_port" par le port du service mysql (3306 par défaut)
 
 ## Dev
 ### Installation d'une nouvelle bibliothèque Python (Ex de Flask)
