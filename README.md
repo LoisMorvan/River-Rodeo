@@ -1,4 +1,5 @@
 # River-Rodeo
+
 Projet Vue écchafauder avec vite:
 
 √ Project name: ... river-rodeo
@@ -16,60 +17,66 @@ Pas de solution de testing bout en bout :
 
 Eslint & Prettier
 
-
 ## Prérequis à installer en local:
+
 - Python 12
 
-    - Windows: Microsoft store
+  - Windows: Microsoft store
 
-    - Installer venv pour utiliser env virtuel  python
+  - Installer venv pour utiliser env virtuel python
 
 - Gestionnaire de version NodeJS nvm
 
-    - Windows:  https://github.com/coreybutler/nvm-windows#installation--upgrades
+  - Windows: https://github.com/coreybutler/nvm-windows#installation--upgrades
 
-    - installer nodeJS lts : 20.11.1
+  - installer nodeJS lts : 20.11.1
 
-            nvm install lts
-            nvm use lts
+          nvm install lts
+          nvm use lts
 
 - Mysql
+
 ## Procédure d'initialisation du projet pour dev local (Windows)
-1. Clôner le projet
+
+1.  Clôner le projet
 
         git clone [url du repo distant]
 
-2. Se placer à la racine du projet
+2.  Se placer à la racine du projet
 
         cd River-Rodeo/
 
-3. Créer l'env virtuel python  12 (que la première fois)
+3.  Créer l'env virtuel python 12 (que la première fois)
 
         python3.12 -m venv env
 
-
-4. Lancer l'env virtuel
-    ````
+4.  Lancer l'env virtuel
+    ```
     .\env\Scripts\activate
-    ````
+    ```
+
 ## Lancer le back (Windows)
+
     pip install -r requirements.txt
     python manage.py makemigrations
     python manage.py migrate
     python manage.py runserver
 
 ## Lancer le front (Windows)
+
     npm install
     npm run dev
 
 ## MySQL
+
 ### Installation de Mysql (Windows)
 
 Allez sur ce lien https://dev.mysql.com/downloads/installer/ et télécharger la dernière version de Mysql
 
 ### Lancement de MySQL (Windows)
 
-Si MySQL ne se lance pas au démarrage de l'ordinateur suivez cette DOC. 
+Si MySQL ne se lance pas au démarrage de l'ordinateur suivez cette DOC.
+
 1. Lancer le CMD en tant qu'administrateur et lancer mysql
    ```
    net start nom_du_servie
@@ -79,11 +86,15 @@ Si MySQL ne se lance pas au démarrage de l'ordinateur suivez cette DOC.
 Par défaut pour MySQL 8.0, le nom du service est : MySQL80
 
 ### Création base de données
+
 1. Créer une BDD riverroder
+
 ```
 CREATE DATABASE riverrodeo;
 ```
+
 2. Créer un utilisateur sur le localhost username(Ex: adminRiverRoder) avec tous les droits sur le shéma & conserver le mdp
+
 ```
 CREATE USER 'adminRiverRoder'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON riverrodeo . * TO 'adminRiverRoder'@'localhost';
@@ -95,7 +106,7 @@ GRANT ALL PRIVILEGES ON riverrodeo . * TO 'adminRiverRoder'@'localhost';
    ```
    touch .env
    ```
-3. Dans le fichier .env ajouter les varaibles d'environnement nécéssaire
+2. Dans le fichier .env ajouter les varaibles d'environnement nécéssaire
 
    ```
     DJANGO_ENV=environnement
@@ -115,12 +126,20 @@ GRANT ALL PRIVILEGES ON riverrodeo . * TO 'adminRiverRoder'@'localhost';
    Remplacer la variable "database_port" par le port du service mysql (3306 par défaut)
 
 ## Dev
+
 ### Installation d'une nouvelle bibliothèque Python (Ex de Flask)
 
 - Une foi dans le répertoire serveur
+
 ```
 pip install Flask
 pip freeze -l > requirements.txt
+```
+
+### Création super utilisateur Django
+
+```
+python manage.py createsuperuser
 ```
 
 # river-rodeo
@@ -138,8 +157,8 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
 
 1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
+   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
+   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
 2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
 
 ## Customize configuration
@@ -175,5 +194,3 @@ npm run test:unit
 ```sh
 npm run lint
 ```
-
-
