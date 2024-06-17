@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
 import Login from '../views/Authentication/LoginView.vue';
 import Register from '../views/Authentication/RegisterView.vue';
+import HomePage from '../views/HomePage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,7 +9,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: HomePage,
       meta: { showNavbar: true }
     },
     {
@@ -23,8 +23,8 @@ const router = createRouter({
       name: 'register',
       component: Register,
       meta: { showNavbar: true }
-    },
+    }
   ]
-})
+});
 
-export default router
+export default router;
