@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'backend.api',
     'backend.authentication',
     'backend.party',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
