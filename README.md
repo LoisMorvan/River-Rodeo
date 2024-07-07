@@ -50,18 +50,17 @@ Eslint & Prettier
 
         python3.12 -m venv env
 
+## Lancer le back (Windows powershell)
 4.  Lancer l'env virtuel
-    ```
-    .\env\Scripts\activate
-    ```
-
-## Lancer le back (Windows)
-
+```
+   .\env\Scripts\activate
+```
+```
     pip install -r requirements.txt
     python manage.py makemigrations
     python manage.py migrate
     python manage.py runserver
-
+```
 ## Lancer le front (Windows)
 
     npm install
@@ -93,16 +92,16 @@ Par défaut pour MySQL 8.0, le nom du service est : MySQL80
 CREATE DATABASE riverrodeo;
 ```
 
-2. Créer un utilisateur sur le localhost username(Ex: adminRiverRoder) avec tous les droits sur le shéma & conserver le mdp
+2. Créer un utilisateur sur le localhost username(Ex: adminRiverRodeo) avec tous les droits sur le shéma & conserver le mdp
 
 ```
-CREATE USER 'adminRiverRoder'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON riverrodeo . * TO 'adminRiverRoder'@'localhost';
+CREATE USER 'adminRiverRodeo'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON riverrodeo . * TO 'adminRiverRodeo'@'localhost';
 ```
 
 ## Ajout des variables d'environnements
 
-1. Créer les fichier d'environnement
+1. Créer les fichier d'environnement dans le dossier backend
    ```
    touch .env
    ```
