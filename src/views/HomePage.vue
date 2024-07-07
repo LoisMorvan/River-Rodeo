@@ -1,19 +1,56 @@
+
+
+<template>
+  <div class="home-view" :style="{ backgroundImage: `url(${backgroundImage})` }">
+    <div class="header"></div>
+    <div class="content">
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openPlayPopup">Play</button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openSearchPartyPopup">
+        Search Party
+      </button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToMyAccount">My Account</button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToSettings">Settings</button>
+    </div>
+    <FriendListComponent :friends="friends" />
+    <div v-if="showSearchPartyPopup" class="popup">
+      <div class="popup-content">
+        <h3>Search Party</h3>
+        <input type="text" v-model="searchPartyId" placeholder="Enter ID" />
+        <button @click="confirmSearchParty">Confirm</button>
+        <button @click="showSearchPartyPopup = false">Cancel</button>
+      </div>
+    </div>
+    <div v-if="showPlayPopup" class="popup">
+      <div class="popup-content">
+        <h3>Play Party</h3>
+        <input type="number" v-model="minAmount" placeholder="Enter Min Amount" />
+        <button @click="confirmPlayParty">Confirm</button>
+        <button @click="showPlayPopup = false">Cancel</button>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script>
-import api from '@/axiosInstances';
 import { useAuthStore } from '@/stores/authStore';
+import FriendListComponent from '@/components/Friends/FriendListComponent.vue';
 
 export default {
+  components: {
+    FriendListComponent
+  },
   data() {
     return {
+      backgroundImage: 'assets/background_home.png',
+      showSearchPartyPopup: false,
+      showPlayPopup: false,
+      searchPartyId: '',
+      minAmount: '',
       friends: [
         { id: 1, name: 'Friend 1' },
         { id: 2, name: 'Friend 2' },
         { id: 3, name: 'Friend 3' }
-      ],
-      showSearchPartyPopup: false,
-      showPlayPopup: false,
-      searchPartyId: '',
-      minAmount: ''
+      ]
     };
   },
   computed: {
@@ -50,43 +87,6 @@ export default {
   },
 };
 </script>
-
-<template>
-  <div class="home-view" :style="{ backgroundImage: `url(${backgroundImage})` }">
-    <div class="header"></div>
-    <div class="content">
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openPlayPopup">Play</button>
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openSearchPartyPopup">
-        Search Party
-      </button>
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToMyAccount">My Account</button>
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToSettings">Settings</button>
-    </div>
-    <div class="friend-list">
-      <h3>Friend List</h3>
-      <ul>
-        <li v-for="friend in friends" :key="friend.id">{{ friend.name }}</li>
-      </ul>
-    </div>
-    <div v-if="showSearchPartyPopup" class="popup">
-      <div class="popup-content">
-        <h3>Search Party</h3>
-        <input type="text" v-model="searchPartyId" placeholder="Enter ID" />
-        <button @click="confirmSearchParty">Confirm</button>
-        <button @click="showSearchPartyPopup = false">Cancel</button>
-      </div>
-    </div>
-    <div v-if="showPlayPopup" class="popup">
-      <div class="popup-content">
-        <h3>Play Party</h3>
-        <input type="number" v-model="minAmount" placeholder="Enter Min Amount" />
-        <button @click="confirmPlayParty">Confirm</button>
-        <button @click="showPlayPopup = false">Cancel</button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <style scoped>
 .home-view {
   display: flex;
@@ -144,14 +144,6 @@ export default {
 
 .bordered-button {
   border: 2px solid red;
-}
-
-.friend-list {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #fbf9f9;
 }
 
 .popup {
