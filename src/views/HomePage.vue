@@ -11,7 +11,7 @@
       <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToMyAccount">My Account</button>
       <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToSettings">Settings</button>
     </div>
-    <FriendListComponent :friends="friends" />
+    <FriendSideBarComponent v-if="isAuthenticated" :friends="friends" :invitations="invitations" />
     <div v-if="showSearchPartyPopup" class="popup">
       <div class="popup-content">
         <h3>Search Party</h3>
@@ -33,11 +33,12 @@
 
 <script>
 import { useAuthStore } from '@/stores/authStore';
-import FriendListComponent from '@/components/Friends/FriendListComponent.vue';
+import FriendSideBarComponent from '@/components/Friends/FriendSideBarComponent.vue';
+
 
 export default {
   components: {
-    FriendListComponent
+    FriendSideBarComponent
   },
   data() {
     return {
@@ -50,6 +51,10 @@ export default {
         { id: 1, name: 'Friend 1' },
         { id: 2, name: 'Friend 2' },
         { id: 3, name: 'Friend 3' }
+      ],
+      invitations: [
+        { id: 1, name: 'Invitation 1' },
+        { id: 2, name: 'Invitation 2' }
       ]
     };
   },
