@@ -35,8 +35,19 @@ export default {
     confirmPlayParty() {
       console.log('Min Amount:', this.minAmount);
       this.showPlayPopup = false;
+    },
+    goToMyAccount() {
+      // TODO: Logique pour naviguer vers My Account
+      console.log('Navigating to My Account');
+    },
+    goToSettings() {
+      // TODO: Logique pour naviguer vers Settings
+      console.log('Navigating to Settings');
     }
-  }
+  },
+  mounted() {
+    useAuthStore().checkAuthentication();
+  },
 };
 </script>
 
@@ -44,10 +55,12 @@ export default {
   <div class="home-view" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <div class="header"></div>
     <div class="content">
-      <button class="main-button bordered-button" @click="openPlayPopup">Play</button>
-      <button class="main-button bordered-button" @click="openSearchPartyPopup">
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openPlayPopup">Play</button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openSearchPartyPopup">
         Search Party
       </button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToMyAccount">My Account</button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToSettings">Settings</button>
     </div>
     <div class="friend-list">
       <h3>Friend List</h3>
