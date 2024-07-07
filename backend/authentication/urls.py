@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegistrationView, LoginView, LogoutView, check_unique
+from .views import RegistrationView, LoginView, LogoutView, check_unique, check_auth
 
 urlpatterns = [
     path('register/', RegistrationView.as_view(), name='register'),
@@ -7,4 +7,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('check-unique/<str:field>/<str:value>/',
          check_unique, name='check_unique'),
+
+    # Endpoint sécurisé avec DRF
+    path('check-auth/', check_auth, name='check_auth'),
 ]

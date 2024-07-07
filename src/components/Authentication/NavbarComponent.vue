@@ -14,6 +14,9 @@
 
 <script>
 import api from '../../axiosInstances';
+import { useAuthStore } from '@/stores/authStore';
+
+
 
 export default {
   emits: ['loggedOut'],
@@ -29,6 +32,8 @@ export default {
   },
   methods: {
     async logout() {
+      const authStore = useAuthStore();
+      authStore.logout();
       try {
         await api.post('/auth/logout/');
         localStorage.removeItem('auth_token');

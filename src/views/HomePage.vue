@@ -1,4 +1,7 @@
 <script>
+import api from '@/axiosInstances';
+import { useAuthStore } from '@/stores/authStore';
+
 export default {
   data() {
     return {
@@ -12,6 +15,11 @@ export default {
       searchPartyId: '',
       minAmount: ''
     };
+  },
+  computed: {
+    isAuthenticated() {
+      return useAuthStore().isAuthenticated; // Accès au state isAuthenticated du store
+    }
   },
   methods: {
     openSearchPartyPopup() {

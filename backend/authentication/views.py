@@ -6,6 +6,8 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from knox.models import AuthToken
 from .serializers import RegistrationSerializer, LoginSerializer, CustomUserSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 
 class RegistrationView(generics.CreateAPIView):
@@ -38,3 +40,9 @@ def check_unique(request, field, value):
     User = get_user_model()
     is_unique = not User.objects.filter(**{f'{field}__iexact': value}).exists()
     return JsonResponse({'is_unique': is_unique})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_auth(request):
+    # Si le middleware a déjà validé le token, l'utilisateur est authentifié
+    return Response({'message': 'Authenticated'}, status=status.HTTP_200_OK)
