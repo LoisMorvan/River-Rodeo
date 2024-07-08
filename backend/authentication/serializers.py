@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import CustomUser
+from .models import CustomUser, Friendship
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -47,3 +47,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('id', 'username', 'first_name', 'last_name',
                   'email', 'date_de_naissance', 'solde')
+
+class FriendshipSerializer(serializers.ModelSerializer):
+    from_user = serializers.StringRelatedField()
+    to_user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Friendship
+        fields = ('id', 'from_user', 'to_user', 'status')

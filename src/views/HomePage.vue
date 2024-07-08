@@ -1,52 +1,25 @@
-<script>
-export default {
-  data() {
-    return {
-      friends: [
-        { id: 1, name: 'Friend 1' },
-        { id: 2, name: 'Friend 2' },
-        { id: 3, name: 'Friend 3' }
-      ],
-      showSearchPartyPopup: false,
-      showPlayPopup: false,
-      searchPartyId: '',
-      minAmount: ''
-    };
-  },
-  methods: {
-    openSearchPartyPopup() {
-      this.showSearchPartyPopup = true;
-    },
-    openPlayPopup() {
-      this.showPlayPopup = true;
-    },
-    confirmSearchParty() {
-      console.log('Search Party ID:', this.searchPartyId);
-      this.showSearchPartyPopup = false;
-    },
-    confirmPlayParty() {
-      console.log('Min Amount:', this.minAmount);
-      this.showPlayPopup = false;
-    }
-  }
-};
-</script>
-
 <template>
   <div class="home-view" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <div class="header"></div>
     <div class="content">
-      <button class="main-button bordered-button" @click="openPlayPopup">Play</button>
-      <button class="main-button bordered-button" @click="openSearchPartyPopup">
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openPlayPopup">
+        Play
+      </button>
+      <button
+        v-if="isAuthenticated"
+        class="main-button bordered-button"
+        @click="openSearchPartyPopup"
+      >
         Search Party
       </button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToMyAccount">
+        My Account
+      </button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToSettings">
+        Settings
+      </button>
     </div>
-    <div class="friend-list">
-      <h3>Friend List</h3>
-      <ul>
-        <li v-for="friend in friends" :key="friend.id">{{ friend.name }}</li>
-      </ul>
-    </div>
+    <FriendSideBarComponent v-if="isAuthenticated" :friends="friends" :invitations="invitations" />
     <div v-if="showSearchPartyPopup" class="popup">
       <div class="popup-content">
         <h3>Search Party</h3>
@@ -66,6 +39,67 @@ export default {
   </div>
 </template>
 
+<script>
+import { useAuthStore } from '@/stores/authStore';
+import FriendSideBarComponent from '@/components/Friends/FriendSideBarComponent.vue';
+
+export default {
+  components: {
+    FriendSideBarComponent
+  },
+  data() {
+    return {
+      backgroundImage: 'assets/background_home.png',
+      showSearchPartyPopup: false,
+      showPlayPopup: false,
+      searchPartyId: '',
+      minAmount: '',
+      friends: [
+        { id: 1, name: 'Friend 1' },
+        { id: 2, name: 'Friend 2' },
+        { id: 3, name: 'Friend 3' }
+      ],
+      invitations: [
+        { id: 1, name: 'Invitation 1' },
+        { id: 2, name: 'Invitation 2' }
+      ]
+    };
+  },
+  computed: {
+    isAuthenticated() {
+      return useAuthStore().isAuthenticated; // Accès au state isAuthenticated du store
+    }
+  },
+
+  methods: {
+    openSearchPartyPopup() {
+      this.showSearchPartyPopup = true;
+    },
+    openPlayPopup() {
+      this.showPlayPopup = true;
+    },
+    confirmSearchParty() {
+      console.log('Search Party ID:', this.searchPartyId);
+      this.showSearchPartyPopup = false;
+    },
+    confirmPlayParty() {
+      console.log('Min Amount:', this.minAmount);
+      this.showPlayPopup = false;
+    },
+    goToMyAccount() {
+      // TODO: Logique pour naviguer vers My Account
+      console.log('Navigating to My Account');
+    },
+    goToSettings() {
+      // TODO: Logique pour naviguer vers Settings
+      console.log('Navigating to Settings');
+    }
+  },
+  mounted() {
+    useAuthStore().checkAuthentication();
+  }
+};
+</script>
 <style scoped>
 .home-view {
   display: flex;
@@ -125,14 +159,6 @@ export default {
   border: 2px solid red;
 }
 
-.friend-list {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #fbf9f9;
-}
-
 .popup {
   position: fixed;
   top: 0;
@@ -156,5 +182,9 @@ export default {
   margin-bottom: 10px;
   padding: 5px;
   width: 80%;
+}
+
+.popup-content h3 {
+  color: #505050;
 }
 </style>
