@@ -1,15 +1,23 @@
-
-
 <template>
   <div class="home-view" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <div class="header"></div>
     <div class="content">
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openPlayPopup">Play</button>
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openSearchPartyPopup">
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openPlayPopup">
+        Play
+      </button>
+      <button
+        v-if="isAuthenticated"
+        class="main-button bordered-button"
+        @click="openSearchPartyPopup"
+      >
         Search Party
       </button>
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToMyAccount">My Account</button>
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToSettings">Settings</button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToMyAccount">
+        My Account
+      </button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToSettings">
+        Settings
+      </button>
     </div>
     <FriendSideBarComponent v-if="isAuthenticated" :friends="friends" :invitations="invitations" />
     <div v-if="showSearchPartyPopup" class="popup">
@@ -34,7 +42,6 @@
 <script>
 import { useAuthStore } from '@/stores/authStore';
 import FriendSideBarComponent from '@/components/Friends/FriendSideBarComponent.vue';
-
 
 export default {
   components: {
@@ -63,6 +70,7 @@ export default {
       return useAuthStore().isAuthenticated; // Accès au state isAuthenticated du store
     }
   },
+
   methods: {
     openSearchPartyPopup() {
       this.showSearchPartyPopup = true;
@@ -89,7 +97,7 @@ export default {
   },
   mounted() {
     useAuthStore().checkAuthentication();
-  },
+  }
 };
 </script>
 <style scoped>
@@ -174,5 +182,9 @@ export default {
   margin-bottom: 10px;
   padding: 5px;
   width: 80%;
+}
+
+.popup-content h3 {
+  color: #505050;
 }
 </style>

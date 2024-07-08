@@ -7,6 +7,9 @@
     <div class="navbar-links">
       <button v-if="!isLoggedIn" @click="goToLogin" class="button-login">Login</button>
       <button v-if="!isLoggedIn" @click="goToRegister" class="button-register">Register</button>
+
+      <div v-if="isLoggedIn" class="user-balance">Solde: {{ userBalance }}$</div>
+
       <button v-if="isLoggedIn" @click="logout" class="button-logout">Logout</button>
     </div>
   </nav>
@@ -16,18 +19,22 @@
 import api from '../../axiosInstances';
 import { useAuthStore } from '@/stores/authStore';
 
-
-
 export default {
   emits: ['loggedOut'],
   data() {
     return {
-      isLoggedIn: !!localStorage.getItem('auth_token')
+      isLoggedIn: !!localStorage.getItem('auth_token'),
+      userBalance: 0
     };
   },
   watch: {
     $route: function () {
       this.isLoggedIn = !!localStorage.getItem('auth_token');
+    }
+  },
+  created() {
+    if (this.isLoggedIn) {
+      this.fetchUserBalance();
     }
   },
   methods: {
@@ -52,6 +59,16 @@ export default {
     },
     goToRegister() {
       this.$router.push('/register');
+    },
+    fetchUserBalance() {
+      api
+        .get('/auth/balance/')
+        .then((response) => {
+          this.userBalance = response.data.balance;
+        })
+        .catch((error) => {
+          console.error('Error fetching user balance:', error);
+        });
     }
   }
 };
@@ -81,6 +98,7 @@ export default {
 .navbar-links {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 45px;
 }
 

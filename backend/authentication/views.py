@@ -86,3 +86,9 @@ def reject_friendship_invitation(request, invitation_id):
     invitation.status = 'rejected'
     invitation.save()
     return Response({'message': 'Invitation rejected successfully'}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_balance(request):
+    user = request.user
+    return JsonResponse({'balance': user.solde})
