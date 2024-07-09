@@ -2,7 +2,6 @@
 export default {
   data() {
     return {
-      gameId: '12345',
       chairs: [
         { id: 2, player: null },
         { id: 3, player: null },
@@ -16,6 +15,16 @@ export default {
       ],
       betAmount: 0
     };
+  },
+  mounted() {
+    console.log('Party ID:', this.id);
+    // Utilisez this.id pour charger les détails de la partie à partir de l'API, par exemple
+  },
+  props: {
+    id: {
+      type: [String, Number],
+      required: true
+    }
   },
   methods: {
     sit(chairId) {
@@ -63,7 +72,7 @@ export default {
 <template>
   <div class="poker-table">
     <button @click="quit" class="quit-button">Quitter</button>
-    <h1 class="game-id">Game ID: {{ gameId }}</h1>
+    <h1 class="game-id">Game ID: {{ this.id }}</h1>
     <div class="table-container">
       <div class="table">
         <img src="@/assets/poker-table.png" alt="Poker Table" class="table-image" />

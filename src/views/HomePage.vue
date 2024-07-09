@@ -19,7 +19,7 @@
         Settings
       </button>
     </div>
-    <FriendSideBarComponent v-if="isAuthenticated" :friends="friends" :invitations="invitations" />
+    <FriendSideBarComponent v-if="isAuthenticated" />
     <div v-if="showSearchPartyPopup" class="popup">
       <div class="popup-content">
         <h3>Search Party</h3>
@@ -54,16 +54,7 @@ export default {
       showSearchPartyPopup: false,
       showPlayPopup: false,
       searchPartyId: '',
-      minAmount: '',
-      friends: [
-        { id: 1, name: 'Friend 1' },
-        { id: 2, name: 'Friend 2' },
-        { id: 3, name: 'Friend 3' }
-      ],
-      invitations: [
-        { id: 1, name: 'Invitation 1' },
-        { id: 2, name: 'Invitation 2' }
-      ]
+      minAmount: ''
     };
   },
   computed: {
@@ -71,10 +62,8 @@ export default {
       return useAuthStore().isAuthenticated; // Accès au state isAuthenticated du store
     }
   },
-
   methods: {
     openSearchPartyPopup() {
-      this.$router.push('/party');
       this.showSearchPartyPopup = true;
     },
     openPlayPopup() {
@@ -88,8 +77,9 @@ export default {
       const payload = { min_amount: this.minAmount };
       api
         .post('/party/create/', payload)
-        .then(() => {
-          console.log('Party created successfully');
+        .then((response) => {
+          console.log('Created party:', response.data.id);
+          this.$router.push({ name: 'party', params: { id: response.data.id } });
         })
         .catch((error) => {
           console.error('Error creating party:', error);
@@ -97,7 +87,6 @@ export default {
 
       console.log('Min Amount:', this.minAmount);
       this.showPlayPopup = false;
-      this.$router.push('/party');
     },
     goToMyAccount() {
       // TODO: Logique pour naviguer vers My Account

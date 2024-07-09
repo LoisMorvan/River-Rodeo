@@ -26,10 +26,11 @@ const router = createRouter({
       meta: { showNavbar: true }
     },
     {
-      path: '/party',
+      path: '/party/:id',
       name: 'party',
       component: Party,
-      meta: { showNavbar: false }
+      meta: { showNavbar: false },
+      props: true
     }
   ]
 });
