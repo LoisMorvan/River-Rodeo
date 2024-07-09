@@ -70,7 +70,14 @@ export default {
       this.showPlayPopup = true;
     },
     confirmSearchParty() {
-      console.log('Search Party ID:', this.searchPartyId);
+      api
+        .post(`/party/join/${this.searchPartyId}/`)
+        .then(() => {
+          this.$router.push({ name: 'party', params: { id: this.searchPartyId } });
+        })
+        .catch((error) => {
+          console.error('Error joining party:', error);
+        });
       this.showSearchPartyPopup = false;
     },
     confirmPlayParty() {
@@ -78,7 +85,6 @@ export default {
       api
         .post('/party/create/', payload)
         .then((response) => {
-          console.log('Created party:', response.data.id);
           this.$router.push({ name: 'party', params: { id: response.data.id } });
         })
         .catch((error) => {
