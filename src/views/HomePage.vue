@@ -42,6 +42,7 @@
 <script>
 import { useAuthStore } from '@/stores/authStore';
 import FriendSideBarComponent from '@/components/Friends/FriendSideBarComponent.vue';
+import api from '@/axiosInstances';
 
 export default {
   components: {
@@ -83,6 +84,16 @@ export default {
       this.showSearchPartyPopup = false;
     },
     confirmPlayParty() {
+      const payload = { min_amount: this.minAmount };
+      api
+        .post('/party/create/', payload)
+        .then(() => {
+          console.log('Party created successfully');
+        })
+        .catch((error) => {
+          console.error('Error creating party:', error);
+        });
+
       console.log('Min Amount:', this.minAmount);
       this.showPlayPopup = false;
     },
