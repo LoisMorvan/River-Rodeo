@@ -74,6 +74,7 @@ export default {
 
   methods: {
     openSearchPartyPopup() {
+      this.$router.push('/party');
       this.showSearchPartyPopup = true;
     },
     openPlayPopup() {
@@ -96,6 +97,7 @@ export default {
 
       console.log('Min Amount:', this.minAmount);
       this.showPlayPopup = false;
+      this.$router.push('/party');
     },
     goToMyAccount() {
       // TODO: Logique pour naviguer vers My Account
