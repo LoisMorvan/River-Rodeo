@@ -1,43 +1,56 @@
 <template>
   <nav class="navbar">
-    <div @click="goToHome" href="/" class="navbar-logo">
+    <div @click="goToHome" class="navbar-logo">
       <img src="@/assets/logo-navbar.svg" alt="Logo" />
       <div class="navbar-brand">River Rodeo</div>
     </div>
     <div class="navbar-links">
-      <button v-if="!isLoggedIn" @click="goToLogin" class="button-login">Login</button>
-      <button v-if="!isLoggedIn" @click="goToRegister" class="button-register">Register</button>
-      <button v-if="isLoggedIn" @click="logout" class="button-logout">Logout</button>
+      <button v-if="!isAuthenticated" @click="goToLogin" class="button-login">Login</button>
+      <button v-if="!isAuthenticated" @click="goToRegister" class="button-register">
+        Register
+      </button>
+
+      <div v-if="isAuthenticated" class="user-balance">Solde: {{ userBalance }}$</div>
+
+      <button v-if="isAuthenticated" @click="logout" class="button-logout">Logout</button>
     </div>
   </nav>
 </template>
 
 <script>
-import api from '../../axiosInstances';
+import api from '@/axiosInstances';
+import { useAuthStore } from '@/stores/authStore';
 
 export default {
   emits: ['loggedOut'],
   data() {
     return {
-      isLoggedIn: !!localStorage.getItem('auth_token')
+      userBalance: 0
     };
   },
+  computed: {
+    isAuthenticated() {
+      return useAuthStore().isAuthenticated;
+    }
+  },
   watch: {
-    $route: function () {
-      this.isLoggedIn = !!localStorage.getItem('auth_token');
+    isAuthenticated(newVal) {
+      if (newVal) {
+        this.fetchUserBalance();
+      }
+    }
+  },
+  created() {
+    if (this.isAuthenticated) {
+      this.fetchUserBalance();
     }
   },
   methods: {
     async logout() {
-      try {
-        await api.post('/auth/logout/');
-        localStorage.removeItem('auth_token');
-        this.isLoggedIn = false;
-        this.$router.push('/');
-        this.$emit('loggedOut');
-      } catch (error) {
-        console.error(error);
-      }
+      const authStore = useAuthStore();
+      await authStore.logout();
+      this.$router.push('/');
+      this.$emit('loggedOut');
     },
     goToHome() {
       this.$router.push('/');
@@ -47,6 +60,16 @@ export default {
     },
     goToRegister() {
       this.$router.push('/register');
+    },
+    fetchUserBalance() {
+      api
+        .get('/auth/balance/')
+        .then((response) => {
+          this.userBalance = response.data.balance;
+        })
+        .catch((error) => {
+          console.error('Error fetching user balance:', error);
+        });
     }
   }
 };
@@ -54,7 +77,7 @@ export default {
 
 <style scoped>
 .navbar {
-  background-color: black; /* Définit la couleur de fond en noir */
+  background-color: black;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
@@ -65,6 +88,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
 }
 
 .navbar-brand {
@@ -76,6 +100,7 @@ export default {
 .navbar-links {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 45px;
 }
 

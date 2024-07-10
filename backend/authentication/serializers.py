@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import CustomUser
+from .models import CustomUser, Friendship
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -33,13 +33,21 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
-    password = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        user = authenticate(**data)
-        if user and user.is_active:
-            return user
-        raise serializers.ValidationError("Invalid credentials")
+        username = data.get('username')
+        password = data.get('password')
+
+        if username and password:
+            user = authenticate(request=self.context.get('request'), username=username, password=password)
+            if user is None:
+                raise serializers.ValidationError("Invalid username or password.")
+        else:
+            raise serializers.ValidationError("Must include 'username' and 'password'.")
+
+        data['user'] = user
+        return data
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -47,3 +55,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('id', 'username', 'first_name', 'last_name',
                   'email', 'date_de_naissance', 'solde')
+
+class FriendshipSerializer(serializers.ModelSerializer):
+    from_user = serializers.StringRelatedField()
+    to_user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Friendship
+        fields = ('id', 'from_user', 'to_user', 'status')

@@ -1,4 +1,5 @@
 from treys import Card, Evaluator
+from decimal import Decimal
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -27,6 +28,11 @@ class PartyCreateView(generics.CreateAPIView):
         data = request.data.copy()
         data['creator'] = request.user.id
 
+        # Vérifiez si l'utilisateur a suffisamment de solde avant de créer la partie
+        min_amount = data.get('min_amount', 0)
+        if request.user.solde < Decimal(min_amount):
+            return Response({"detail": "Insufficient funds"}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -36,6 +42,12 @@ class PartyCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         party = serializer.save(creator=self.request.user)
+
+        # Deduct the min_amount from the user's balance and save
+        self.request.user.solde -= party.min_amount
+        self.request.user.save()
+
+        # Add the creator to the party users
         party.users.add(self.request.user)
 
 
