@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Login from '../views/Authentication/LoginView.vue';
-import Register from '../views/Authentication/RegisterView.vue';
-import HomePage from '../views/HomePage.vue';
-import Party from '../views/Party.vue';
+import Login from '@/views/Authentication/LoginView.vue';
+import Register from '@/views/Authentication/RegisterView.vue';
+import HomePage from '@/views/HomePage.vue';
+import Party from '@/views/Party.vue';
+import Account from '@/views/Account/AccountView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,10 +27,17 @@ const router = createRouter({
       meta: { showNavbar: true }
     },
     {
-      path: '/party',
+      path: '/party/:id',
       name: 'party',
       component: Party,
-      meta: { showNavbar: false }
+      meta: { showNavbar: false },
+      props: true
+    },
+    {
+      path: '/account',
+      name: 'account',
+      component: Account,
+      meta: { showNavbar: true }
     }
   ]
 });

@@ -24,7 +24,7 @@ class LoginView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data
+        user = serializer.validated_data['user']
         _, token = AuthToken.objects.create(user)
 
         # Use the CustomUserSerializer to serialize the user instance
