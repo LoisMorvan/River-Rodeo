@@ -1,88 +1,93 @@
 <template>
-    <div class="friend-sidebar">
-      <div class="tabs">
-        <button :class="{ active: activeTab === 'friends' }" @click="activeTab = 'friends'">Amis</button>
-        <button :class="{ active: activeTab === 'invitations' }" @click="activeTab = 'invitations'">Invitations</button>
-      </div>
-      <div class="content">
-        <div v-if="activeTab === 'friends'">
-          <ul>
-            <li v-for="friend in friends" :key="friend.id">{{ friend }}</li>
-          </ul>
-          <div class="add-friend">
-        <input type="text" v-model="newFriendUsername" placeholder="Username">
-        <button @click="sendFriendRequest">+</button>
+  <div class="friend-sidebar">
+    <div class="tabs">
+      <button :class="{ active: activeTab === 'friends' }" @click="activeTab = 'friends'">
+        Amis
+      </button>
+      <button :class="{ active: activeTab === 'invitations' }" @click="activeTab = 'invitations'">
+        Invitations
+      </button>
     </div>
-        </div>
-        <div v-if="activeTab === 'invitations'">
-          <ul>
-            <li v-for="invitation in invitations" :key="invitation.id"><span>{{ invitation.from_user }}</span>
-              <button class="ignore-button" @click="ignoreInvitation(invitation.id)">Ignorer</button>
-              <button class="accept-button" @click="acceptInvitation(invitation.id)">Accepter</button>
-            </li>
-          </ul>
-        </div>
+    <div class="content">
+      <div v-if="activeTab === 'friends'">
+        <ul>
+          <li v-for="friend in friends" :key="friend.id">{{ friend }}</li>
+        </ul>
+      </div>
+      <div v-if="activeTab === 'invitations'">
+        <ul>
+          <li v-for="invitation in invitations" :key="invitation.id">
+            <span>{{ invitation.from_user }}</span>
+            <button class="ignore-button" @click="ignoreInvitation(invitation.id)">Ignorer</button>
+            <button class="accept-button" @click="acceptInvitation(invitation.id)">Accepter</button>
+          </li>
+        </ul>
       </div>
     </div>
-  </template>
-  
-  <script>
-  import api from '@/axiosInstances';
-  export default {
-    name: 'FriendSideBar',
-    props: {
-    },
-    data() {
-      return {
-        activeTab: 'friends',
-        invitations: [],
-        friends: [],
-        newFriendUsername: ''
-      };
-    },
-    created() {
+  </div>
+</template>
+
+<script>
+import api from '@/axiosInstances';
+export default {
+  name: 'FriendSideBar',
+  props: {},
+  data() {
+    return {
+      activeTab: 'friends',
+      invitations: [],
+      friends: []
+    };
+  },
+  created() {
     this.fetchInvitations();
     this.fetchFriends();
   },
   methods: {
     fetchFriends() {
-      api.get('/auth/friendship/amis/')
-        .then(response => {
+      api
+        .get('/auth/friendship/amis/')
+        .then((response) => {
           this.friends = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error fetching invitations:', error);
         });
     },
     fetchInvitations() {
-      api.get('/auth/friendship/invitations/')
-        .then(response => {
+      api
+        .get('/auth/friendship/invitations/')
+        .then((response) => {
           this.invitations = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error fetching invitations:', error);
         });
     },
     acceptInvitation(invitationId) {
-      api.post(`/auth/friendship/invitations/${invitationId}/accept/`)
-        .then(response => {
+      api
+        .post(`/auth/friendship/invitations/${invitationId}/accept/`)
+        .then((response) => {
           console.log('Invitation accepted successfully:', response.data);
           // Optionally update UI or fetch invitations again
           this.fetchInvitations();
+          this.fetchFriends();
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error accepting invitation:', error);
         });
         this.fetchFriends();
     },
     ignoreInvitation(invitationId) {
-      api.post(`/auth/friendship/invitations/${invitationId}/reject/`)
-        .then(response => {
+      api
+        .post(`/auth/friendship/invitations/${invitationId}/reject/`)
+        .then((response) => {
           console.log('Invitation rejected successfully:', response.data);
           // Optionally update UI or fetch invitations again
           this.fetchInvitations();
+          this.fetchFriends();
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error rejecting invitation:', error);
         });
     },
@@ -150,11 +155,13 @@
     padding: 5px 0;
   }
 
-  .ignore-button,
+.ignore-button,
 .accept-button {
   padding: 5px 10px;
   cursor: pointer;
-  transition: background-color 0.3s, border-width 0.3s;
+  transition:
+    background-color 0.3s,
+    border-width 0.3s;
 }
 
 .ignore-button {

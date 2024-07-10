@@ -24,7 +24,7 @@ class LoginView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data
+        user = serializer.validated_data['user']
         _, token = AuthToken.objects.create(user)
 
         # Use the CustomUserSerializer to serialize the user instance
@@ -101,3 +101,9 @@ def send_friend_request(request):
     new_request = Friendship.objects.create(from_user=from_user, to_user=to_user, status='pending')
     serializer = FriendshipSerializer(new_request)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_balance(request):
+    user = request.user
+    return JsonResponse({'balance': user.solde})

@@ -1,29 +1,42 @@
-
-
 <template>
   <div class="home-view" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <div class="header"></div>
     <div class="content">
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openPlayPopup">Play</button>
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openSearchPartyPopup">
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="openPlayPopup">
+        Play
+      </button>
+      <button
+        v-if="isAuthenticated"
+        class="main-button bordered-button"
+        @click="openSearchPartyPopup"
+      >
         Search Party
       </button>
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToMyAccount">My Account</button>
-      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToSettings">Settings</button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToMyAccount">
+        My Account
+      </button>
+      <button v-if="isAuthenticated" class="main-button bordered-button" @click="goToSettings">
+        Settings
+      </button>
     </div>
-    <FriendSideBarComponent v-if="isAuthenticated" :friends="friends" :invitations="invitations" />
-    <div v-if="showSearchPartyPopup" class="popup">
+    <FriendSideBarComponent v-if="isAuthenticated" />
+    <div v-if="showSearchPartyPopup" class="popup" @keydown.enter="confirmSearchParty">
       <div class="popup-content">
         <h3>Search Party</h3>
-        <input type="text" v-model="searchPartyId" placeholder="Enter ID" />
+        <input type="text" v-model="searchPartyId" placeholder="Enter ID" ref="searchPartyInput" />
         <button @click="confirmSearchParty">Confirm</button>
         <button @click="showSearchPartyPopup = false">Cancel</button>
       </div>
     </div>
-    <div v-if="showPlayPopup" class="popup">
+    <div v-if="showPlayPopup" class="popup" @keydown.enter="confirmPlayParty">
       <div class="popup-content">
         <h3>Play Party</h3>
-        <input type="number" v-model="minAmount" placeholder="Enter Min Amount" />
+        <input
+          type="number"
+          v-model="minAmount"
+          placeholder="Enter Min Amount"
+          ref="playPartyInput"
+        />
         <button @click="confirmPlayParty">Confirm</button>
         <button @click="showPlayPopup = false">Cancel</button>
       </div>
@@ -34,7 +47,7 @@
 <script>
 import { useAuthStore } from '@/stores/authStore';
 import FriendSideBarComponent from '@/components/Friends/FriendSideBarComponent.vue';
-
+import api from '@/axiosInstances';
 
 export default {
   components: {
@@ -46,16 +59,7 @@ export default {
       showSearchPartyPopup: false,
       showPlayPopup: false,
       searchPartyId: '',
-      minAmount: '',
-      friends: [
-        { id: 1, name: 'Friend 1' },
-        { id: 2, name: 'Friend 2' },
-        { id: 3, name: 'Friend 3' }
-      ],
-      invitations: [
-        { id: 1, name: 'Invitation 1' },
-        { id: 2, name: 'Invitation 2' }
-      ]
+      minAmount: ''
     };
   },
   computed: {
@@ -66,21 +70,43 @@ export default {
   methods: {
     openSearchPartyPopup() {
       this.showSearchPartyPopup = true;
+      this.$nextTick(() => {
+        this.$refs.searchPartyInput.focus();
+      });
     },
     openPlayPopup() {
       this.showPlayPopup = true;
+      this.$nextTick(() => {
+        this.$refs.playPartyInput.focus();
+      });
     },
     confirmSearchParty() {
-      console.log('Search Party ID:', this.searchPartyId);
+      api
+        .post(`/party/join/${this.searchPartyId}/`)
+        .then(() => {
+          this.$router.push({ name: 'party', params: { id: this.searchPartyId } });
+        })
+        .catch((error) => {
+          console.error('Error joining party:', error);
+        });
       this.showSearchPartyPopup = false;
     },
     confirmPlayParty() {
+      const payload = { min_amount: this.minAmount };
+      api
+        .post('/party/create/', payload)
+        .then((response) => {
+          this.$router.push({ name: 'party', params: { id: response.data.id } });
+        })
+        .catch((error) => {
+          console.error('Error creating party:', error);
+        });
+
       console.log('Min Amount:', this.minAmount);
       this.showPlayPopup = false;
     },
     goToMyAccount() {
-      // TODO: Logique pour naviguer vers My Account
-      console.log('Navigating to My Account');
+      this.$router.push({ name: 'account' });
     },
     goToSettings() {
       // TODO: Logique pour naviguer vers Settings
@@ -89,7 +115,7 @@ export default {
   },
   mounted() {
     useAuthStore().checkAuthentication();
-  },
+  }
 };
 </script>
 <style scoped>
@@ -174,5 +200,9 @@ export default {
   margin-bottom: 10px;
   padding: 5px;
   width: 80%;
+}
+
+.popup-content h3 {
+  color: #505050;
 }
 </style>

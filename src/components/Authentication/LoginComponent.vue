@@ -20,14 +20,14 @@
           <a @click="goToRegister" href="#">Register</a>
         </div>
         <div class="inputBox">
-          <input type="submit" value="Login">
+          <input type="submit" value="Login" />
         </div>
       </form>
     </div>
   </div>
 </template>
 <script>
-import api from '../../axiosInstances';
+import api from '@/axiosInstances';
 
 export default {
   data() {
@@ -37,7 +37,7 @@ export default {
       showSuccessMessage: false,
       showErrorMessage: false,
       errorMessage: '',
-      loginAttempted: false,
+      loginAttempted: false
     };
   },
   created() {
@@ -50,9 +50,10 @@ export default {
     async login() {
       this.loginAttempted = true;
       try {
+        localStorage.removeItem('auth_token');
         const response = await api.post('/auth/login/', {
           username: this.username,
-          password: this.password,
+          password: this.password
         });
         // Save the token in the local storage
         localStorage.setItem('auth_token', response.data.token);
@@ -66,8 +67,8 @@ export default {
     },
     goToRegister() {
       this.$router.push('/register');
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -116,7 +117,7 @@ export default {
 
 .login .content h2 {
   font-size: 2em;
-  color: #02BD9C;
+  color: #02bd9c;
   text-transform: uppercase;
 }
 
@@ -155,8 +156,8 @@ export default {
   pointer-events: none;
 }
 
-.login .content .form-login .inputBox input:focus~i,
-.login .content .form-login .inputBox input:valid~i {
+.login .content .form-login .inputBox input:focus ~ i,
+.login .content .form-login .inputBox input:valid ~ i {
   transform: translateY(-7.5px);
   font-size: 0.8em;
   color: #fff;
@@ -175,13 +176,13 @@ export default {
 }
 
 .login .content .form-login .links a:nth-child(2) {
-  color: #02BD9C;
+  color: #02bd9c;
   font-weight: 600;
 }
 
-.login .content .form-login .inputBox input[type="submit"] {
+.login .content .form-login .inputBox input[type='submit'] {
   padding: 10px;
-  background: #02BD9C;
+  background: #02bd9c;
   color: #000;
   font-weight: 600;
   font-size: 1.35em;
@@ -189,7 +190,7 @@ export default {
   cursor: pointer;
 }
 
-input[type="submit"]:active {
+input[type='submit']:active {
   opacity: 0.6;
 }
 
