@@ -9,6 +9,10 @@
           <ul>
             <li v-for="friend in friends" :key="friend.id">{{ friend }}</li>
           </ul>
+          <div class="add-friend">
+        <input type="text" v-model="newFriendUsername" placeholder="Username">
+        <button @click="sendFriendRequest">+</button>
+    </div>
         </div>
         <div v-if="activeTab === 'invitations'">
           <ul>
@@ -32,7 +36,8 @@
       return {
         activeTab: 'friends',
         invitations: [],
-        friends: []
+        friends: [],
+        newFriendUsername: ''
       };
     },
     created() {
@@ -68,6 +73,7 @@
         .catch(error => {
           console.error('Error accepting invitation:', error);
         });
+        this.fetchFriends();
     },
     ignoreInvitation(invitationId) {
       api.post(`/auth/friendship/invitations/${invitationId}/reject/`)
@@ -79,10 +85,25 @@
         .catch(error => {
           console.error('Error rejecting invitation:', error);
         });
+    },
+    sendFriendRequest() {
+      const username = this.newFriendUsername.trim();
+      if (username) {
+        api.post('/auth/friendship/requests/', { username })
+          .then(response => {
+            console.log('Friend request sent successfully:', response.data);
+            this.newFriendUsername = ''; // Clear the input field
+            // Optionally update UI or fetch friends/invitations again
+            this.fetchFriends();
+            this.fetchInvitations();
+          })
+          .catch(error => {
+            console.error('Error sending friend request:', error);
+          });
+      }
     }
   }
-  
-  }
+  };
   </script>
   
   <style scoped>
@@ -156,6 +177,32 @@
 .accept-button:hover {
   background-color: #0056b3;
   border-width: 4px;
+}
+.add-friend {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.add-friend input {
+  flex: 1;
+  padding: 8px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-friend button {
+  padding: 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-friend button:hover {
+  background-color: #0056b3;
 }
   </style>
   
