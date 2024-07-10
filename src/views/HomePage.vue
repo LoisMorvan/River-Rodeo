@@ -20,18 +20,23 @@
       </button>
     </div>
     <FriendSideBarComponent v-if="isAuthenticated" />
-    <div v-if="showSearchPartyPopup" class="popup">
+    <div v-if="showSearchPartyPopup" class="popup" @keydown.enter="confirmSearchParty">
       <div class="popup-content">
         <h3>Search Party</h3>
-        <input type="text" v-model="searchPartyId" placeholder="Enter ID" />
+        <input type="text" v-model="searchPartyId" placeholder="Enter ID" ref="searchPartyInput" />
         <button @click="confirmSearchParty">Confirm</button>
         <button @click="showSearchPartyPopup = false">Cancel</button>
       </div>
     </div>
-    <div v-if="showPlayPopup" class="popup">
+    <div v-if="showPlayPopup" class="popup" @keydown.enter="confirmPlayParty">
       <div class="popup-content">
         <h3>Play Party</h3>
-        <input type="number" v-model="minAmount" placeholder="Enter Min Amount" />
+        <input
+          type="number"
+          v-model="minAmount"
+          placeholder="Enter Min Amount"
+          ref="playPartyInput"
+        />
         <button @click="confirmPlayParty">Confirm</button>
         <button @click="showPlayPopup = false">Cancel</button>
       </div>
@@ -65,9 +70,15 @@ export default {
   methods: {
     openSearchPartyPopup() {
       this.showSearchPartyPopup = true;
+      this.$nextTick(() => {
+        this.$refs.searchPartyInput.focus();
+      });
     },
     openPlayPopup() {
       this.showPlayPopup = true;
+      this.$nextTick(() => {
+        this.$refs.playPartyInput.focus();
+      });
     },
     confirmSearchParty() {
       api
@@ -95,8 +106,7 @@ export default {
       this.showPlayPopup = false;
     },
     goToMyAccount() {
-      // TODO: Logique pour naviguer vers My Account
-      console.log('Navigating to My Account');
+      this.$router.push({ name: 'account' });
     },
     goToSettings() {
       // TODO: Logique pour naviguer vers Settings

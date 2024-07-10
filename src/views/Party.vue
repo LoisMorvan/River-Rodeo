@@ -43,7 +43,7 @@ export default {
       console.log(`Raise: ${this.betAmount}`);
     },
     quit() {
-      console.log('Quit');
+      this.$router.push('/');
     },
     getChairStyle(chairId) {
       const chairPositions = [
