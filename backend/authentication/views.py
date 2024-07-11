@@ -14,6 +14,14 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 
 
+class UserView(GenericAPIView):
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
+
 class RegistrationView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
 

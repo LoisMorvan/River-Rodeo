@@ -1,76 +1,5 @@
-<script>
-export default {
-  data() {
-    return {
-      chairs: [
-        { id: 2, player: null },
-        { id: 3, player: null },
-        { id: 4, player: null },
-        { id: 5, player: null },
-        { id: 6, player: null },
-        { id: 7, player: null },
-        { id: 8, player: null },
-        { id: 9, player: null },
-        { id: 10, player: null }
-      ],
-      betAmount: 0
-    };
-  },
-  mounted() {
-    console.log('Party ID:', this.id);
-    // Utilisez this.id pour charger les détails de la partie à partir de l'API, par exemple
-  },
-  props: {
-    id: {
-      type: [String, Number],
-      required: true
-    }
-  },
-  methods: {
-    sit(chairId) {
-      console.log(`Sitting on chair ${chairId}`);
-    },
-    fold() {
-      console.log('Fold');
-    },
-    call() {
-      console.log('Call');
-    },
-    allIn() {
-      console.log('All In');
-    },
-    raise() {
-      console.log(`Raise: ${this.betAmount}`);
-    },
-    quit() {
-      this.$router.push('/');
-    },
-    getChairStyle(chairId) {
-      const chairPositions = [
-        { top: '0%', left: '50%' },
-        { top: '10%', left: '95%' },
-        { top: '40%', left: '100%' },
-        { top: '75%', left: '98%' },
-        { top: '100%', left: '75%' },
-        { top: '100%', left: '50%' },
-        { top: '100%', left: '25%' },
-        { top: '73%', left: '0%' },
-        { top: '40%', left: '-4%' },
-        { top: '10%', left: '4%' }
-      ];
-
-      return {
-        top: chairPositions[chairId - 1].top,
-        left: chairPositions[chairId - 1].left,
-        transform: 'translate(-50%, -50%)'
-      };
-    }
-  }
-};
-</script>
-
 <template>
-  <div class="poker-table">
+  <div class="poker-table" v-if="user">
     <button @click="quit" class="quit-button">Quitter</button>
     <h1 class="game-id">Game ID: {{ this.id }}</h1>
     <div class="table-container">
@@ -79,7 +8,10 @@ export default {
         <div class="chair" v-for="chair in chairs" :key="chair.id" :style="getChairStyle(chair.id)">
           <div class="chair-container">
             <img src="@/assets/chair.png" alt="Chair" class="chair-image" />
-            <button @click="sit(chair.id)" class="sit-button">Sit</button>
+          </div>
+          <div class="player-info" :style="getPlayerInfoStyle(chair.id)">
+            <span v-if="chair.player">{{ chair.player.username }}</span>
+            <span v-else>Empty</span>
           </div>
         </div>
         <div class="dealer">
@@ -100,7 +32,186 @@ export default {
   </div>
 </template>
 
+<script>
+import api from '@/axiosInstances';
+
+export default {
+  data() {
+    return {
+      user: null,
+      party: null,
+      chairs: [
+        { id: 2, player: null },
+        { id: 3, player: null },
+        { id: 4, player: null },
+        { id: 5, player: null },
+        { id: 6, player: null },
+        { id: 7, player: null },
+        { id: 8, player: null },
+        { id: 9, player: null },
+        { id: 10, player: null }
+      ],
+      betAmount: 0
+    };
+  },
+  mounted() {
+    Promise.all([this.fetchUser(), this.fetchParty()])
+      .then(() => {
+        console.log('Rotation started');
+        this.rotateChairs();
+      })
+      .catch((error) => {
+        console.error('Error fetching user and party:', error);
+      });
+  },
+  props: {
+    id: {
+      type: [String, Number],
+      required: true
+    }
+  },
+  methods: {
+    fetchUser() {
+      api
+        .get(`/auth/user`)
+        .then((response) => {
+          this.user = response.data;
+        })
+        .catch((error) => {
+          console.error('Error fetching user:', error);
+        });
+    },
+    fetchParty() {
+      const payload = { partyId: this.id };
+      api
+        .get(`/party/${this.id}/`)
+        .then((response) => {
+          this.party = response.data;
+          this.updateChairPlayers();
+        })
+        .catch((error) => {
+          console.error('Error fetching user:', error);
+        });
+    },
+    fold() {
+      console.log('Fold');
+    },
+    call() {
+      console.log('Call');
+    },
+    allIn() {
+      console.log('All In');
+    },
+    raise() {
+      console.log(`Raise: ${this.betAmount}`);
+    },
+    quit() {
+      this.$router.push('/');
+      api
+        .post(`/party/quit/${this.id}/`)
+        .then(() => {
+          console.log('Quit party');
+        })
+        .catch((error) => {
+          console.error('Error quitting party:', error);
+        });
+    },
+    getChairStyle(chairId) {
+      const chairPositions = [
+        { top: '0%', left: '50%' },
+        { top: '10%', left: '95%' },
+        { top: '40%', left: '100%' },
+        { top: '75%', left: '98%' },
+        { top: '100%', left: '75%' },
+        { top: '100%', left: '50%' },
+        { top: '100%', left: '25%' },
+        { top: '73%', left: '0%' },
+        { top: '40%', left: '-4%' },
+        { top: '10%', left: '4%' }
+      ];
+
+      return {
+        top: chairPositions[chairId - 1].top,
+        left: chairPositions[chairId - 1].left,
+        transform: 'translate(-50%, -50%)'
+      };
+    },
+    getPlayerInfoStyle(chairId) {
+      const offsets = {
+        2: { top: '0%', left: '60%' },
+        3: { top: '10%', left: '105%' },
+        4: { top: '40%', left: '110%' },
+        5: { top: '75%', left: '108%' },
+        6: { top: '100%', left: '85%' },
+        7: { top: '100%', left: '60%' },
+        8: { top: '100%', left: '35%' },
+        9: { top: '73%', left: '-10%' },
+        10: { top: '40%', left: '-14%' },
+        11: { top: '10%', left: '14%' }
+      };
+      return {
+        top: offsets[chairId].top,
+        left: offsets[chairId].left,
+        transform: 'translate(-50%, -50%)'
+      };
+    },
+    updateChairPlayers() {
+      // Mettre à jour les joueurs sur les chaises en fonction des données de la partie
+      if (this.party && this.party.user_usernames) {
+        this.chairs.forEach((chair, index) => {
+          if (index < this.party.user_usernames.length) {
+            chair.player = { username: this.party.user_usernames[index] };
+          } else {
+            chair.player = null;
+          }
+        });
+      }
+    },
+    rotateChairs() {
+      if (!this.user) {
+        console.warn('User is not yet defined. Waiting for user data...');
+        setTimeout(() => this.rotateChairs(), 500); // Réessayer après un court délai
+        return;
+      }
+
+      // Trouver l'index de la chaise où se trouve l'utilisateur actuel
+      let userChairIndex = this.chairs.findIndex(
+        (chair) => chair.player && chair.player.username === this.user.username
+      );
+
+      if (userChairIndex === -1) {
+        console.warn('User is not seated in any chair. Unable to rotate.');
+        return;
+      }
+
+      // Calculer le décalage nécessaire pour que l'utilisateur soit sur le siège 5
+      let offset = 5 - userChairIndex;
+
+      // Effectuer la rotation circulaire des chaises en tenant compte de l'offset
+      this.chairs = this.chairs.map((chair, index) => {
+        let newIndex = (index + offset + this.chairs.length) % this.chairs.length;
+        return {
+          ...chair,
+          player: index === 4 ? this.chairs[userChairIndex].player : this.chairs[newIndex].player
+        };
+      });
+    }
+  }
+};
+</script>
+
 <style scoped>
+.player-info {
+  position: absolute;
+  top: 50%; /* Ajustez selon vos besoins */
+  left: 120%; /* Ajustez selon vos besoins */
+  transform: translate(-50%, -50%);
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
 .poker-table {
   display: flex;
   flex-direction: column;

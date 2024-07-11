@@ -36,6 +36,21 @@ class PartyCreateView(generics.CreateAPIView):
 
         # Add the creator to the party users
         party.users.add(self.request.user)
+    
+class PartyDetailView(generics.RetrieveAPIView):
+    queryset = Party.objects.all()
+    serializer_class = PartySerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            party = self.get_object()
+            serializer = self.get_serializer(party)
+            return Response(serializer.data)
+        except Party.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        
 
 
 class PartyJoinView(generics.GenericAPIView):
@@ -62,3 +77,26 @@ class PartyJoinView(generics.GenericAPIView):
         party.users.add(user)
 
         return Response({"detail": "Successfully joined the party"}, status=status.HTTP_200_OK)
+
+
+class PartyQuitView(generics.GenericAPIView):
+    serializer_class = PartySerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        party = get_object_or_404(Party, pk=pk)
+        user = request.user
+
+        # Check if the user is in the party
+        if not party.users.filter(id=user.id).exists():
+            return Response({"detail": "User not in the party"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Remove the user from the party
+        party.users.remove(user)
+
+        # Optionally refund the min_amount to the user's balance
+        # This assumes a full refund; TODO: adjust logic if a partial refund is required
+        user.solde += party.min_amount
+        user.save()
+
+        return Response({"detail": "Successfully left the party"}, status=status.HTTP_200_OK)
