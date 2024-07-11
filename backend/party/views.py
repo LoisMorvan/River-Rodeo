@@ -89,8 +89,8 @@ class StartRoundView(APIView):
         if party.has_active_round():
             return Response({"detail": "An active round is already in progress"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # if party.users.count() < 2:
-            # return Response({"detail": "Not enough players to start a round"}, status=status.HTTP_400_BAD_REQUEST)
+        if party.users.count() < 2:
+            return Response({"detail": "Not enough players to start a round"}, status=status.HTTP_400_BAD_REQUEST)
 
         round = Round.objects.create(party=party, dealer=party.creator)
         GameState.objects.create(
