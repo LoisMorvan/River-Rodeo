@@ -1,13 +1,25 @@
 from rest_framework import serializers
-from .models import Party, Round, Pot, PlayerHand, CommunityCard, Bet, GameState
+from .models import Party, Round, Pot, PlayerHand, CommunityCard, Bet, GameState, PlayerBalance
+
+
+class PlayerBalanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerBalance
+        fields = ['player', 'balance']
 
 
 class PartySerializer(serializers.ModelSerializer):
+    player_balances = serializers.SerializerMethodField()
     user_usernames = serializers.SerializerMethodField()
+    
     class Meta:
         model = Party
-        fields = ['id', 'min_amount', 'creator', 'created_at', 'is_active','user_usernames']
+        fields = ['id', 'min_amount', 'creator',
+                  'created_at', 'is_active', 'player_balances','user_usernames']
         read_only_fields = ['creator', 'created_at', 'is_active']
+
+    def get_player_balances(self, obj):
+        return obj.get_user_balances()
 
     def get_user_usernames(self, obj):
         return [user.username for user in obj.users.all()]

@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 import random
 
-from .models import Party, Round, PlayerHand, CommunityCard, Bet, GameState
+from .models import Party, Round, PlayerHand, CommunityCard, Bet, GameState, PlayerBalance
 from .serializers import PartySerializer, RoundSerializer, PlayerHandSerializer, CommunityCardSerializer
 
 
@@ -49,7 +49,8 @@ class PartyCreateView(generics.CreateAPIView):
 
         # Add the creator to the party users
         party.users.add(self.request.user)
-    
+
+
 class PartyDetailView(generics.RetrieveAPIView):
     queryset = Party.objects.all()
     serializer_class = PartySerializer
@@ -63,7 +64,9 @@ class PartyDetailView(generics.RetrieveAPIView):
             return Response(serializer.data)
         except Party.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-        
+
+        PlayerBalance.objects.create(
+            party=party, player=self.request.user, balance=party.min_amount)
 
 
 class PartyJoinView(generics.GenericAPIView):
@@ -88,6 +91,8 @@ class PartyJoinView(generics.GenericAPIView):
 
         # Add the user to the party
         party.users.add(user)
+        PlayerBalance.objects.create(
+            party=party, player=user, balance=party.min_amount)
 
         return Response({"detail": "Successfully joined the party"}, status=status.HTTP_200_OK)
 
@@ -173,20 +178,24 @@ class PlaceBetView(APIView):
         round = get_object_or_404(Round, id=round_id)
         game_state = get_object_or_404(GameState, round=round)
         user = request.user
-        amount = request.data.get('amount')
+        amount = Decimal(request.data.get('amount'))
         action = request.data.get('action')  # 'bet', 'check', 'fold'
 
         if action not in ['bet', 'check', 'fold']:
             return Response({"detail": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
 
+        player_balance = get_object_or_404(
+            PlayerBalance, party=round.party, player=user)
+
         if action == 'bet':
-            if user.solde < amount:
+            if player_balance.balance < amount:
                 return Response({"detail": "Insufficient funds"}, status=status.HTTP_400_BAD_REQUEST)
             if amount <= game_state.current_bet:
                 return Response({"detail": "Bet must be higher than the current bet"}, status=status.HTTP_400_BAD_REQUEST)
+
             Bet.objects.create(round=round, player=user, amount=amount)
-            user.solde -= amount
-            user.save()
+            player_balance.balance -= amount
+            player_balance.save()
 
             if user.id not in game_state.player_bets:
                 game_state.player_bets[user.id] = 0
@@ -237,8 +246,11 @@ class DetermineWinnerView(APIView):
         round.save()
 
         game_state = GameState.objects.get(round=round)
-        best_player.solde += game_state.pot
-        best_player.save()
+
+        player_balance = PlayerBalance.objects.get(
+            party=round.party, player=best_player)
+        player_balance.balance += game_state.pot
+        player_balance.save()
 
         return Response({"detail": f"Winner determined: {best_player.username}"}, status=status.HTTP_200_OK)
 
@@ -282,9 +294,12 @@ class PartyQuitView(generics.GenericAPIView):
         # Remove the user from the party
         party.users.remove(user)
 
-        # Optionally refund the min_amount to the user's balance
-        # This assumes a full refund; TODO: adjust logic if a partial refund is required
-        user.solde += party.min_amount
+        # Retrieve the player's balance for the party
+        player_balance = get_object_or_404(
+            PlayerBalance, party=party, player=user)
+
+        # Refund the remaining balance to the user's solde
+        user.solde += player_balance.balance
         user.save()
 
         return Response({"detail": "Successfully left the party"}, status=status.HTTP_200_OK)
