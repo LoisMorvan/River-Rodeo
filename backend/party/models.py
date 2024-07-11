@@ -17,6 +17,21 @@ class Party(models.Model):
     def has_active_round(self):
         return self.rounds.filter(is_active=True).exists()
 
+    def get_user_balances(self):
+        balances = PlayerBalance.objects.filter(party=self)
+        return {balance.player.username: balance.balance for balance in balances}
+
+
+class PlayerBalance(models.Model):
+    party = models.ForeignKey(
+        Party, related_name='player_balances', on_delete=models.CASCADE)
+    player = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='player_balances', on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f'{self.player.username} balance in Party {self.party.id}: {self.balance}'
+
 
 class Round(models.Model):
     party = models.ForeignKey(
