@@ -47,6 +47,9 @@ class PartyCreateView(generics.CreateAPIView):
         self.request.user.solde -= party.min_amount
         self.request.user.save()
 
+        PlayerBalance.objects.create(
+            party=party, player=self.request.user, balance=party.min_amount)
+
         # Add the creator to the party users
         party.users.add(self.request.user)
 
@@ -61,12 +64,15 @@ class PartyDetailView(generics.RetrieveAPIView):
         try:
             party = self.get_object()
             serializer = self.get_serializer(party)
-            return Response(serializer.data)
+            player_balances = {user.username: PlayerBalance.objects.get(
+                party=party, player=user).balance for user in party.users.all()}
+            response_data = serializer.data
+            response_data['player_balances'] = player_balances
+            return Response(response_data)
         except Party.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        PlayerBalance.objects.create(
-            party=party, player=self.request.user, balance=party.min_amount)
+        except PlayerBalance.DoesNotExist:
+            return Response({"detail": "Player balance not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 class PartyJoinView(generics.GenericAPIView):
