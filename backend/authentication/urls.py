@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegistrationView, LoginView, LogoutView, UserView, accept_friendship_invitation, check_unique, check_auth, get_friendship_invitations, reject_friendship_invitation, get_friendship_amis, get_balance
+from .views import RegistrationView, LoginView, LogoutView, UserView, accept_friendship_invitation, check_unique, check_auth, get_friendship_invitations, reject_friendship_invitation, get_friendship_amis, send_friend_request, get_balance
 
 urlpatterns = [
     path('register/', RegistrationView.as_view(), name='register'),
@@ -16,4 +16,5 @@ urlpatterns = [
     path('friendship/invitations/', get_friendship_invitations, name='get_friendship_invitations'),
     path('friendship/invitations/<int:invitation_id>/accept/', accept_friendship_invitation, name='accept_friendship_invitation'),
     path('friendship/invitations/<int:invitation_id>/reject/', reject_friendship_invitation, name='reject_friendship_invitation'),
+    path('friendship/requests/', send_friend_request, name='send_friend_request'),
 ]
