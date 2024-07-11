@@ -54,6 +54,7 @@ export default {
   },
   methods: {
     async register() {
+      localStorage.removeItem('auth_token');
       let isEmailUnique = await this.checkUnique('email', this.email);
       let isUsernameUnique = await this.checkUnique('username', this.username);
 
