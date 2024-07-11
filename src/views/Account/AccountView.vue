@@ -53,17 +53,17 @@ body,
 }
 
 .tabs button {
-  padding: 10px 20px;
-  margin-right: 10px;
-  background: none;
-  border: 1px solid #ddd;
-  cursor: pointer;
   flex: 1;
+  padding: 10px 0;
+  background: none;
+  border: 5px solid #cd1313;
+  cursor: pointer;
   text-align: center;
+  color: white;
 }
 
 .tabs button.active {
-  background: #ddd;
+  background: #cd1313;
   border-bottom: none;
 }
 

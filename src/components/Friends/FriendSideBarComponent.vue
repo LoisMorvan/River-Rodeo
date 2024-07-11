@@ -76,6 +76,7 @@ export default {
         .catch((error) => {
           console.error('Error accepting invitation:', error);
         });
+      this.fetchFriends();
     },
     ignoreInvitation(invitationId) {
       api
@@ -89,6 +90,22 @@ export default {
         .catch((error) => {
           console.error('Error rejecting invitation:', error);
         });
+    },
+    sendFriendRequest() {
+      const username = this.newFriendUsername.trim();
+      if (username) {
+        api
+          .post('/auth/friendship/requests/', { username })
+          .then((response) => {
+            console.log('Friend request sent successfully:', response.data);
+            this.newFriendUsername = '';
+            this.fetchFriends();
+            this.fetchInvitations();
+          })
+          .catch((error) => {
+            console.error('Error sending friend request:', error);
+          });
+      }
     }
   }
 };
@@ -167,5 +184,31 @@ li {
 .accept-button:hover {
   background-color: #0056b3;
   border-width: 4px;
+}
+.add-friend {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.add-friend input {
+  flex: 1;
+  padding: 8px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-friend button {
+  padding: 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.add-friend button:hover {
+  background-color: #0056b3;
 }
 </style>

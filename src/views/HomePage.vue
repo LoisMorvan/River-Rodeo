@@ -101,8 +101,6 @@ export default {
         .catch((error) => {
           console.error('Error creating party:', error);
         });
-
-      console.log('Min Amount:', this.minAmount);
       this.showPlayPopup = false;
     },
     goToMyAccount() {

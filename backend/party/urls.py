@@ -1,9 +1,11 @@
 from django.urls import path
-from .views import PartyCreateView, PartyJoinView, StartRoundView, DealCardsView, DealCommunityCardView, PlaceBetView, DetermineWinnerView
+from .views import PartyCreateView, PartyDetailView, PartyJoinView, PartyQuitView, StartRoundView, DealCardsView, DealCommunityCardView, PlaceBetView, DetermineWinnerView
 
 urlpatterns = [
     path('create/', PartyCreateView.as_view(), name='party-create'),
     path('join/<int:pk>/', PartyJoinView.as_view(), name='party-join'),
+    path('quit/<int:pk>/', PartyQuitView.as_view(), name='party-quit'),
+    path('<int:id>/', PartyDetailView.as_view(), name='party-detail'),
     path('start_round/<int:party_id>/',
          StartRoundView.as_view(), name='start-round'),
     path('deal_cards/<int:round_id>/',

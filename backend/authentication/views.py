@@ -7,12 +7,20 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from knox.models import AuthToken
 
-from backend.authentication.models import Friendship
+from backend.authentication.models import CustomUser, Friendship
 from .serializers import FriendshipSerializer, RegistrationSerializer, LoginSerializer, CustomUserSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 
+
+class UserView(GenericAPIView):
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
 
 class RegistrationView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
@@ -86,6 +94,21 @@ def reject_friendship_invitation(request, invitation_id):
     invitation.status = 'rejected'
     invitation.save()
     return Response({'message': 'Invitation rejected successfully'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def send_friend_request(request):
+    username = request.data.get('username')
+    if not username:
+        return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+    from_user = request.user
+    to_user = get_object_or_404(CustomUser, username=username)
+    existing_request = Friendship.objects.filter(from_user=from_user, to_user=to_user)
+    if existing_request.exists():
+        return Response({'error': 'Friendship request already exists'}, status=status.HTTP_400_BAD_REQUEST)
+    new_request = Friendship.objects.create(from_user=from_user, to_user=to_user, status='pending')
+    serializer = FriendshipSerializer(new_request)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
