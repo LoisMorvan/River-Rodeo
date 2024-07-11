@@ -76,7 +76,7 @@ export default {
         .catch((error) => {
           console.error('Error accepting invitation:', error);
         });
-        this.fetchFriends();
+      this.fetchFriends();
     },
     ignoreInvitation(invitationId) {
       api
@@ -94,66 +94,66 @@ export default {
     sendFriendRequest() {
       const username = this.newFriendUsername.trim();
       if (username) {
-        api.post('/auth/friendship/requests/', { username })
-          .then(response => {
+        api
+          .post('/auth/friendship/requests/', { username })
+          .then((response) => {
             console.log('Friend request sent successfully:', response.data);
-            this.newFriendUsername = ''; // Clear the input field
-            // Optionally update UI or fetch friends/invitations again
+            this.newFriendUsername = '';
             this.fetchFriends();
             this.fetchInvitations();
           })
-          .catch(error => {
+          .catch((error) => {
             console.error('Error sending friend request:', error);
           });
       }
     }
   }
-  };
-  </script>
-  
-  <style scoped>
-  .friend-sidebar {
-    width: 250px;
-    background-color: #000000;
-    padding: 10px;
-    position: fixed;
-    top: 100px; /* Adjust this value based on your navbar height */
-    right: 0;
-    height: calc(100% - 100px); /* Adjust this value based on your navbar height */
-    overflow-y: auto;
-  }
-  
-  .tabs {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  
-  .tabs button {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    background-color: #ddd;
-  }
-  
-  .tabs button.active {
-    background-color: #bbb;
-  }
-  
-  .content {
-    border-top: 1px solid #ccc;
-    padding-top: 10px;
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  li {
-    padding: 5px 0;
-  }
+};
+</script>
+
+<style scoped>
+.friend-sidebar {
+  width: 250px;
+  background-color: #000000;
+  padding: 10px;
+  position: fixed;
+  top: 100px; /* Adjust this value based on your navbar height */
+  right: 0;
+  height: calc(100% - 100px); /* Adjust this value based on your navbar height */
+  overflow-y: auto;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: #ddd;
+}
+
+.tabs button.active {
+  background-color: #bbb;
+}
+
+.content {
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 5px 0;
+}
 
 .ignore-button,
 .accept-button {
@@ -211,5 +211,4 @@ export default {
 .add-friend button:hover {
   background-color: #0056b3;
 }
-  </style>
-  
+</style>

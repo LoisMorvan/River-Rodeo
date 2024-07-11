@@ -203,8 +203,8 @@ export default {
 <style scoped>
 .player-info {
   position: absolute;
-  top: 50%; /* Ajustez selon vos besoins */
-  left: 120%; /* Ajustez selon vos besoins */
+  top: 50%;
+  left: 120%;
   transform: translate(-50%, -50%);
   background-color: #333;
   color: white;
