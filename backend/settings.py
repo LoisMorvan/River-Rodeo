@@ -57,7 +57,23 @@ INSTALLED_APPS = [
     'backend.authentication',
     'backend.party',
     'drf_yasg',
+    'channels',
 ]
+
+# Configurez le routing des canaux (channels)
+ASGI_APPLICATION = 'backend.asgi.application'
+
+# Configurez le backend pour les canaux (channels)
+CHANNEL_LAYERS = {
+    'default': {
+        # Utilisez InMemoryChannelLayer pour le développement
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        # 'BACKEND': 'channels_redis.core.RedisChannelLayer',  # Utilisez RedisChannelLayer pour la production
+        # 'CONFIG': {
+        #     "hosts": [('localhost', 6379)],  # Configuration Redis pour la production
+        # },
+    },
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

@@ -279,7 +279,6 @@ class PartyQuitView(generics.GenericAPIView):
         if not party.users.filter(id=user.id).exists():
             return Response({"detail": "User not in the party"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Remove the user from the party
         party.users.remove(user)
 
         # Optionally refund the min_amount to the user's balance
