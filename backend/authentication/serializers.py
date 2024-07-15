@@ -8,6 +8,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('id', 'username', 'first_name', 'last_name',
                   'email', 'date_de_naissance', 'solde')
+    
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -63,3 +64,8 @@ class FriendshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friendship
         fields = ('id', 'from_user', 'to_user', 'status')
+
+class ChangeUserDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'username', 'email', 'date_de_naissance', 'solde')        
