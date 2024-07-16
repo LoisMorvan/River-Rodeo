@@ -11,18 +11,19 @@ class PlayerBalanceSerializer(serializers.ModelSerializer):
 class PartySerializer(serializers.ModelSerializer):
     player_balances = serializers.SerializerMethodField()
     user_usernames = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Party
-        fields = ['id', 'min_amount', 'creator',
-                  'created_at', 'is_active', 'player_balances','user_usernames']
+        fields = ['id', 'min_amount', 'creator', 'created_at',
+                  'is_active', 'player_balances', 'user_usernames']
         read_only_fields = ['creator', 'created_at', 'is_active']
 
     def get_player_balances(self, obj):
-        return obj.get_user_balances()
+        return {user.username: PlayerBalance.objects.get(party=obj, player=user).balance for user in obj.users.all()}
 
     def get_user_usernames(self, obj):
         return [user.username for user in obj.users.all()]
+
 
 class RoundSerializer(serializers.ModelSerializer):
     class Meta:

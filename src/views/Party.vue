@@ -10,7 +10,10 @@
             <img src="@/assets/chair.png" alt="Chair" class="chair-image" />
           </div>
           <div class="player-info" :style="getPlayerInfoStyle(chair.id)">
-            <span v-if="chair.player">{{ chair.player.username }}</span>
+            <div v-if="chair.player">
+              <span>{{ chair.player.username }}</span><br>
+              <span>Solde: {{ chair.player.balance }}</span>
+            </div>
             <span v-else>Empty</span>
           </div>
         </div>
@@ -157,10 +160,12 @@ export default {
     },
     updateChairPlayers() {
       // Mettre à jour les joueurs sur les chaises en fonction des données de la partie
-      if (this.party && this.party.user_usernames) {
+      if (this.party && this.party.user_usernames && this.party.player_balances) {
         this.chairs.forEach((chair, index) => {
           if (index < this.party.user_usernames.length) {
-            chair.player = { username: this.party.user_usernames[index] };
+            const username = this.party.user_usernames[index];
+            const balance = this.party.player_balances[username];
+            chair.player = { username, balance };
           } else {
             chair.player = null;
           }
@@ -303,8 +308,10 @@ export default {
 }
 
 .dealer-image {
-  width: 150px; /* Ajustez la taille selon vos besoins */
-  height: auto; /* Conserve les proportions de l'image */
+  width: 150px;
+  /* Ajustez la taille selon vos besoins */
+  height: auto;
+  /* Conserve les proportions de l'image */
 }
 
 .controls {
