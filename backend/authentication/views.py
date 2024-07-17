@@ -25,13 +25,6 @@ class UserView(GenericAPIView):
 class RegistrationView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
 
-    def put(self, request, *args, **kwargs):
-        user = request.user
-        serializer = self.get_serializer(user, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
 class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
