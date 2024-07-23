@@ -49,7 +49,7 @@ export default {
       password: '********',
       isEditing: false,
       originalEmail: '',
-      originalUsername: '',
+      originalUsername: ''
     };
   },
 
@@ -77,7 +77,7 @@ export default {
     saveAccount() {
       const data = {
         email: this.email,
-        username: this.username,
+        username: this.username
       };
 
       if (this.password) {
@@ -85,7 +85,7 @@ export default {
       }
 
       api
-        .put('/auth/user/', data)
+        .put('/auth/update-user/', data)
         .then((response) => {
           this.isEditing = false;
           this.password = '********';
@@ -108,8 +108,8 @@ export default {
         this.originalEmail = response.data.email;
         this.originalUsername = response.data.username;
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
