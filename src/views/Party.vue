@@ -59,6 +59,7 @@ export default {
       .then(() => {
         console.log('Rotation started');
         this.rotateChairs();
+        this.initializeWebSocket();
       })
       .catch((error) => {
         console.error('Error fetching user and party:', error);
@@ -95,7 +96,7 @@ export default {
     },
     initializeWebSocket() {
       const partyId = this.id;
-      this.socket = new WebSocket(`ws://localhost:8000/ws/poker/${partyId}/`);
+      this.socket = new WebSocket(`ws://localhost:8001/ws/poker/${partyId}/`);
 
       this.socket.onopen = () => {
         console.log('WebSocket connection established.');

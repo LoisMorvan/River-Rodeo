@@ -1,9 +1,6 @@
-from django.urls import path
-from channels.routing import URLRouter
+from django.urls import re_path
 from .party.consumers import PokerConsumer
 
 websocket_urlpatterns = [
-    path('ws/poker/<int:party_id>/', PokerConsumer.as_asgi()),
+    re_path(r'ws/poker/(?P<party_id>\d+)/$', PokerConsumer.as_asgi()),
 ]
-
-application = URLRouter(websocket_urlpatterns)
