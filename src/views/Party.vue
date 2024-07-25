@@ -62,6 +62,7 @@ export default {
       .then(() => {
         console.log('Rotation started');
         this.rotateChairs();
+        this.initializeWebSocket();
       })
       .catch((error) => {
         console.error('Error fetching user and party:', error);
@@ -96,17 +97,46 @@ export default {
           console.error('Error fetching user:', error);
         });
     },
+    initializeWebSocket() {
+      const partyId = this.id;
+      this.socket = new WebSocket(`ws://localhost:8001/ws/poker/${partyId}/`);
+
+      this.socket.onopen = () => {
+        console.log('WebSocket connection established.');
+      };
+
+      this.socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        console.log('Message from server:', message);
+        if (message.action === 'update_game_state') {
+          this.updateGameState(message.game_state);
+        }
+      };
+
+      this.socket.onclose = (event) => {
+        console.log('WebSocket connection closed:', event);
+      };
+    },
+    updateGameState(gameState) {
+      // Mettez à jour l'état de jeu localement avec les données reçues du serveur
+      this.party = gameState;
+      this.updateChairPlayers();
+    },
     fold() {
       console.log('Fold');
+      this.sendWebSocketMessage('fold');
     },
     call() {
       console.log('Call');
+      this.sendWebSocketMessage('call');
     },
     allIn() {
       console.log('All In');
+      this.sendWebSocketMessage('all_in');
     },
     raise() {
       console.log(`Raise: ${this.betAmount}`);
+      this.sendWebSocketMessage('raise', { betAmount: this.betAmount });
     },
     quit() {
       this.$router.push('/');
@@ -118,6 +148,13 @@ export default {
         .catch((error) => {
           console.error('Error quitting party:', error);
         });
+    },
+    sendWebSocketMessage(action, data = {}) {
+      const message = {
+        action: action,
+        ...data
+      };
+      this.socket.send(JSON.stringify(message));
     },
     getChairStyle(chairId) {
       const chairPositions = [

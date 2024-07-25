@@ -13,6 +13,10 @@
         <ul>
           <li v-for="friend in friends" :key="friend.id">{{ friend }}</li>
         </ul>
+        <div class="add-friend">
+          <input type="text" v-model="newFriendUsername" placeholder="Nom d'utilisateur" />
+          <button @click="sendFriendRequest">+</button>
+        </div>
       </div>
       <div v-if="activeTab === 'invitations'">
         <ul>

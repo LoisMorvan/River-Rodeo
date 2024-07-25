@@ -51,20 +51,28 @@ Eslint & Prettier
         python3.12 -m venv env
 
 ## Lancer le back (Windows powershell)
+
 4.  Lancer l'env virtuel
+
 ```
    .\env\Scripts\activate
 ```
+
 ```
     pip install -r requirements.txt
     python manage.py makemigrations
     python manage.py migrate
     python manage.py runserver
 ```
+
 ## Lancer le front (Windows)
 
     npm install
     npm run dev
+
+## Lancer le serveur de jeu temps réel
+
+    uvicorn backend.asgi:application --port 8001
 
 ## MySQL
 
