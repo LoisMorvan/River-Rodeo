@@ -57,16 +57,14 @@ export default {
       betAmount: 0
     };
   },
-  mounted() {
-    Promise.all([this.fetchUser(), this.fetchParty()])
-      .then(() => {
-        console.log('Rotation started');
-        this.rotateChairs();
-        this.initializeWebSocket();
-      })
-      .catch((error) => {
-        console.error('Error fetching user and party:', error);
-      });
+  async mounted() {
+    try {
+      await this.fetchUser();
+      await this.fetchParty();
+      this.initializeWebSocket();
+    } catch (error) {
+      console.error('Error fetching user and party:', error);
+    }
   },
   props: {
     id: {
@@ -86,7 +84,6 @@ export default {
         });
     },
     fetchParty() {
-      const payload = { partyId: this.id };
       api
         .get(`/party/${this.id}/`)
         .then((response) => {
@@ -99,6 +96,11 @@ export default {
     },
     initializeWebSocket() {
       const partyId = this.id;
+
+      if (this.socket) {
+        console.log('Closing existing WebSocket connection.');
+        this.closeWebSocket();
+      }
       this.socket = new WebSocket(`ws://localhost:8001/ws/poker/${partyId}/`);
 
       this.socket.onopen = () => {
@@ -108,7 +110,10 @@ export default {
       this.socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
         console.log('Message from server:', message);
-        if (message.action === 'update_game_state') {
+        if (message.type === 'player_join') {
+          console.log('New player joined the party:', message.player);
+          this.fetchParty(); // Fetch party data when a new player joins
+        } else if (message.action === 'update_game_state') {
           this.updateGameState(message.game_state);
         }
       };
@@ -120,7 +125,7 @@ export default {
     updateGameState(gameState) {
       // Mettez à jour l'état de jeu localement avec les données reçues du serveur
       this.party = gameState;
-      this.updateChairPlayers();
+      //this.updateChairPlayers();
     },
     fold() {
       console.log('Fold');
@@ -158,16 +163,22 @@ export default {
     },
     getChairStyle(chairId) {
       const chairPositions = [
-        { top: '0%', left: '50%' },
-        { top: '10%', left: '95%' },
-        { top: '40%', left: '100%' },
-        { top: '75%', left: '98%' },
-        { top: '100%', left: '75%' },
         { top: '100%', left: '50%' },
-        { top: '100%', left: '25%' },
-        { top: '73%', left: '0%' },
-        { top: '40%', left: '-4%' },
-        { top: '10%', left: '4%' }
+
+        { top: '10%', left: '95%' }, //9e
+
+        { top: '40%', left: '-4%' }, //2e
+        { top: '73%', left: '0%' }, //3e
+
+        { top: '100%', left: '25%' }, //4e
+
+        { top: '100%', left: '50%' }, //5e
+        { top: '100%', left: '75%' }, //6e
+        { top: '75%', left: '98%' }, //7e
+
+        { top: '40%', left: '100%' }, //8e
+
+        { top: '10%', left: '4%' } //1e
       ];
 
       return {
@@ -178,15 +189,15 @@ export default {
     },
     getPlayerInfoStyle(chairId) {
       const offsets = {
-        2: { top: '0%', left: '60%' },
-        3: { top: '10%', left: '105%' },
-        4: { top: '40%', left: '110%' },
-        5: { top: '75%', left: '108%' },
-        6: { top: '100%', left: '85%' },
-        7: { top: '100%', left: '60%' },
-        8: { top: '100%', left: '35%' },
-        9: { top: '73%', left: '-10%' },
-        10: { top: '40%', left: '-14%' },
+        10: { top: '0%', left: '60%' }, //1e
+        9: { top: '10%', left: '105%' }, //8e
+        8: { top: '40%', left: '100%' }, //7e
+        7: { top: '75%', left: '108%' }, //6e
+        6: { top: '100%', left: '85%' }, //5e
+        5: { top: '100%', left: '60%' }, //4e
+        4: { top: '100%', left: '35%' }, //3e
+        3: { top: '73%', left: '-10%' }, //2e
+        2: { top: '40%', left: '-14%' }, //9e
         11: { top: '10%', left: '14%' }
       };
       return {
@@ -196,6 +207,7 @@ export default {
       };
     },
     updateChairPlayers() {
+      this.chairs.forEach((chair) => (chair.player = null));
       // Mettre à jour les joueurs sur les chaises en fonction des données de la partie
       if (this.party && this.party.user_usernames && this.party.player_balances) {
         this.chairs.forEach((chair, index) => {
@@ -208,35 +220,47 @@ export default {
           }
         });
       }
+      console.log('Chairs updated:', JSON.stringify(this.chairs));
+      this.rotateChairs();
     },
     rotateChairs() {
       if (!this.user) {
-        console.warn('User is not yet defined. Waiting for user data...');
-        setTimeout(() => this.rotateChairs(), 500); // Réessayer après un court délai
+        console.warn('User not found. Unable to rotate chairs.');
         return;
       }
-
       // Trouver l'index de la chaise où se trouve l'utilisateur actuel
       let userChairIndex = this.chairs.findIndex(
         (chair) => chair.player && chair.player.username === this.user.username
       );
+      console.log('User chair index:', userChairIndex);
 
       if (userChairIndex === -1) {
         console.warn('User is not seated in any chair. Unable to rotate.');
         return;
       }
 
-      // Calculer le décalage nécessaire pour que l'utilisateur soit sur le siège 5
-      let offset = 5 - userChairIndex;
+      // Calculer le décalage nécessaire pour que l'utilisateur soit sur le siège 4
+      let offset = 4 - userChairIndex;
+      console.log('Offset:', offset);
 
-      // Effectuer la rotation circulaire des chaises en tenant compte de l'offset
-      this.chairs = this.chairs.map((chair, index) => {
-        let newIndex = (index + offset + this.chairs.length) % this.chairs.length;
-        return {
-          ...chair,
-          player: index === 4 ? this.chairs[userChairIndex].player : this.chairs[newIndex].player
-        };
-      });
+      // Créer une copie de la liste des chaises
+      const oldChairs = this.chairs.map((chair) => ({ ...chair }));
+
+      // Créer une nouvelle liste pour les chaises avec les joueurs réassignés
+      const newChairs = [];
+      for (let i = 0; i < this.chairs.length; i++) {
+        let newIndex = (i + offset + this.chairs.length) % this.chairs.length;
+        console.log('index:', i, 'New index:', newIndex);
+        newChairs.push({
+          ...this.chairs[newIndex],
+          player: oldChairs[i].player
+        });
+        console.log('Chairs soon rotated:', JSON.stringify(this.chairs));
+      }
+
+      // Remplacer l'ancienne liste de chaises par la nouvelle
+      this.chairs = newChairs;
+      console.log('Chairs rotated:', JSON.stringify(this.chairs));
     }
   }
 };
