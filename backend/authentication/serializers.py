@@ -40,21 +40,18 @@ class LoginSerializer(serializers.Serializer):
         password = data.get('password')
 
         if username and password:
-            user = authenticate(request=self.context.get('request'), username=username, password=password)
+            user = authenticate(request=self.context.get(
+                'request'), username=username, password=password)
             if user is None:
-                raise serializers.ValidationError("Invalid username or password.")
+                raise serializers.ValidationError(
+                    "Invalid username or password.")
         else:
-            raise serializers.ValidationError("Must include 'username' and 'password'.")
+            raise serializers.ValidationError(
+                "Must include 'username' and 'password'.")
 
         data['user'] = user
         return data
 
-
-class CustomUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ('id', 'username', 'first_name', 'last_name',
-                  'email', 'date_de_naissance', 'solde')
 
 class FriendshipSerializer(serializers.ModelSerializer):
     from_user = serializers.StringRelatedField()
@@ -63,3 +60,18 @@ class FriendshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friendship
         fields = ('id', 'from_user', 'to_user', 'status')
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'password']
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
