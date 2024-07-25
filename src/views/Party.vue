@@ -10,7 +10,11 @@
             <img src="@/assets/chair.png" alt="Chair" class="chair-image" />
           </div>
           <div class="player-info" :style="getPlayerInfoStyle(chair.id)">
-            <span v-if="chair.player">{{ chair.player.username }}</span>
+            <div v-if="chair.player">
+              <span>{{ chair.player.username }}</span
+              ><br />
+              <span>Solde: {{ chair.player.balance }}</span>
+            </div>
             <span v-else>Empty</span>
           </div>
         </div>
@@ -206,10 +210,12 @@ export default {
     updateChairPlayers() {
       this.chairs.forEach((chair) => (chair.player = null));
       // Mettre à jour les joueurs sur les chaises en fonction des données de la partie
-      if (this.party && this.party.user_usernames) {
+      if (this.party && this.party.user_usernames && this.party.player_balances) {
         this.chairs.forEach((chair, index) => {
           if (index < this.party.user_usernames.length) {
-            chair.player = { username: this.party.user_usernames[index] };
+            const username = this.party.user_usernames[index];
+            const balance = this.party.player_balances[username];
+            chair.player = { username, balance };
           } else {
             chair.player = null;
           }
@@ -219,43 +225,49 @@ export default {
       this.rotateChairs();
     },
     rotateChairs() {
-      if (!this.user) {
-        console.warn('User not found. Unable to rotate chairs.');
-        return;
-      }
-      // Trouver l'index de la chaise où se trouve l'utilisateur actuel
-      let userChairIndex = this.chairs.findIndex(
-        (chair) => chair.player && chair.player.username === this.user.username
-      );
-      console.log('User chair index:', userChairIndex);
+      const tryRotateChairs = (retries = 5, delay = 1000) => {
+        if (!this.user) {
+          console.warn('User not found. Unable to rotate chairs.');
+          if (retries > 0) {
+            setTimeout(() => {
+              tryRotateChairs(retries - 1, delay);
+            }, delay);
+          }
+          return;
+        }
 
-      if (userChairIndex === -1) {
-        console.warn('User is not seated in any chair. Unable to rotate.');
-        return;
-      }
+        // Trouver l'index de la chaise où se trouve l'utilisateur actuel
+        let userChairIndex = this.chairs.findIndex(
+          (chair) => chair.player && chair.player.username === this.user.username
+        );
+        console.log('User chair index:', userChairIndex);
 
-      // Calculer le décalage nécessaire pour que l'utilisateur soit sur le siège 4
-      let offset = 4 - userChairIndex;
-      console.log('Offset:', offset);
+        if (userChairIndex === -1) {
+          console.warn('User is not seated in any chair. Unable to rotate.');
+          return;
+        }
 
-      // Créer une copie de la liste des chaises
-      const oldChairs = this.chairs.map((chair) => ({ ...chair }));
+        // Calculer le décalage nécessaire pour que l'utilisateur soit sur le siège 4
+        let offset = 4 - userChairIndex;
+        console.log('Offset:', offset);
 
-      // Créer une nouvelle liste pour les chaises avec les joueurs réassignés
-      const newChairs = [];
-      for (let i = 0; i < this.chairs.length; i++) {
-        let newIndex = (i + offset + this.chairs.length) % this.chairs.length;
-        console.log('index:', i, 'New index:', newIndex);
-        newChairs.push({
-          ...this.chairs[newIndex],
-          player: oldChairs[i].player
-        });
-        console.log('Chairs soon rotated:', JSON.stringify(this.chairs));
-      }
+        // Créer une nouvelle liste pour les chaises avec les joueurs réassignés
+        const newChairs = new Array(this.chairs.length);
+        for (let i = 0; i < this.chairs.length; i++) {
+          let newIndex = (i + offset + this.chairs.length) % this.chairs.length;
+          console.log('index:', i, 'New index:', newIndex);
+          newChairs[newIndex] = {
+            ...this.chairs[newIndex],
+            player: this.chairs[i].player
+          };
+        }
 
-      // Remplacer l'ancienne liste de chaises par la nouvelle
-      this.chairs = newChairs;
-      console.log('Chairs rotated:', JSON.stringify(this.chairs));
+        // Remplacer l'ancienne liste de chaises par la nouvelle
+        this.chairs = newChairs;
+        console.log('Chairs rotated:', JSON.stringify(this.chairs));
+      };
+
+      tryRotateChairs();
     }
   }
 };
@@ -364,8 +376,10 @@ export default {
 }
 
 .dealer-image {
-  width: 150px; /* Ajustez la taille selon vos besoins */
-  height: auto; /* Conserve les proportions de l'image */
+  width: 150px;
+  /* Ajustez la taille selon vos besoins */
+  height: auto;
+  /* Conserve les proportions de l'image */
 }
 
 .controls {
